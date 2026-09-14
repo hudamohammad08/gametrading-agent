@@ -27,7 +27,7 @@
             box-shadow: 0 0 50px rgba(115, 19, 19, 0.2);
         }
 
-        /* --- OVERLAYS (BLUR, PECUNDANG, WIN, MARGIN CALL, LOW BALANCE) --- */
+        /* --- OVERLAYS --- */
         .overlay-screen {
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1000; flex-direction: column; justify-content: center; align-items: center; 
@@ -41,6 +41,15 @@
             text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000, 0 0 60px #800000;
             animation: pulse-red 1s infinite alternate; font-family: 'Poppins', sans-serif;
         }
+
+        /* ANIMASI TRADER PROFESIONAL (3x TP & > $50) */
+        #pro-screen { background: rgba(10, 15, 0, 0.98); z-index: 2000; }
+        .pro-text {
+            color: #d4af37; font-size: 2.8rem; font-weight: 900; line-height: 1.1;
+            text-shadow: 0 0 20px #d4af37, 0 0 40px #d4af37, 0 0 60px #ffffff;
+            animation: pulse-gold 1s infinite alternate; font-family: 'Poppins', sans-serif;
+        }
+        @keyframes pulse-gold { from { transform: scale(1); text-shadow: 0 0 20px #d4af37; } to { transform: scale(1.05); text-shadow: 0 0 40px #d4af37, 0 0 80px #fff; } }
 
         #low-balance-screen { background: rgba(20, 10, 0, 0.98); }
         .warning-text {
@@ -110,12 +119,27 @@
         .info-value { font-size: 1rem; font-weight: 600; font-family: 'Playfair Display', serif; }
         .profit { color: var(--buy-color); }
         .loss { color: var(--sell-color); }
+        
         .play-pause-btn { background: var(--maroon-main); border: 1px solid var(--gold-accent); color: white; padding: 5px 8px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.75rem;}
+        #btn-speed { background: #1a1a2e; border-color: #4a4e69; width: 35px; }
+        #btn-mute { background: #1a1a2e; border-color: #4a4e69; width: 35px; font-size: 0.7rem; }
+        #btn-stats { background: #1a1a2e; border-color: #4a4e69; padding: 5px 8px; font-size: 0.65rem; }
 
         #canvas-container { flex: 1; width: 100%; position: relative; background: var(--bg-base); cursor: grab; overflow: hidden;}
         #canvas-container:active { cursor: grabbing; }
         canvas { display: block; width: 100%; height: 100%; touch-action: none;}
         .reset-view-hint { position: absolute; top: 10px; left: 10px; font-size: 0.6rem; color: rgba(255,255,255,0.4); pointer-events: none;}
+
+        /* News Ticker */
+        #news-ticker {
+            position: absolute; top: 0; left: 0; width: 100%; height: 28px;
+            background: linear-gradient(90deg, var(--maroon-dark), var(--maroon-main), var(--maroon-dark));
+            color: var(--gold-accent); font-size: 0.65rem; font-weight: 600;
+            display: flex; align-items: center; overflow: hidden; z-index: 10;
+            border-bottom: 1px solid var(--maroon-light);
+        }
+        #news-ticker-content { white-space: nowrap; animation: ticker 20s linear infinite; padding-left: 100%; }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
         .control-panel { background: var(--bg-panel); padding: 10px 12px; border-top: 1px solid var(--maroon-dark); box-sizing: border-box; width: 100%; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px;}
         
@@ -126,62 +150,159 @@
         .input-group label { font-size: 0.65rem; color: var(--gold-accent); flex: 1.2; }
         .input-group input { flex: 1; background: var(--bg-base); border: 1px solid var(--maroon-light); color: white; padding: 5px; border-radius: 4px; box-sizing: border-box; font-family: 'Poppins', sans-serif; font-size: 0.8rem;}
 
-        .trade-info { text-align: center; font-size: 0.65rem; color: var(--text-muted); line-height: 1.2;}
+        /* Trade Notes */
+        #trade-notes { width: 100%; background: var(--bg-base); border: 1px solid var(--maroon-light); color: white; padding: 6px; border-radius: 4px; font-family: 'Poppins', sans-serif; font-size: 0.75rem; resize: none; box-sizing: border-box; }
+
         .buttons { display: flex; gap: 8px; }
         .btn { flex: 1; border: none; padding: 10px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; color: white; text-transform: uppercase; cursor: pointer;}
         .btn-buy { background: var(--buy-color); }
         .btn-sell { background: var(--sell-color); }
         .btn-close { background: transparent; border: 1px solid var(--gold-accent); color: var(--gold-accent); display: none; }
 
+        /* Timeframe & Indicators */
+        .chart-controls { display: flex; gap: 6px; flex-wrap: wrap; }
+        .chart-btn { padding: 4px 10px; background: transparent; border: 1px solid var(--maroon-light); color: var(--text-muted); border-radius: 4px; font-size: 0.65rem; cursor: pointer; }
+        .chart-btn.active { background: var(--maroon-dark); color: var(--gold-accent); border-color: var(--gold-accent); }
+
+        /* Streak Display */
+        #streak-display {
+            position: absolute; top: 35px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.85); border: 1px solid var(--gold-accent); color: var(--gold-accent);
+            padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700;
+            z-index: 15; display: none; white-space: nowrap;
+        }
+
         /* JURNAL HISTORY */
-        .journal-container { background: #110808; border: 1px solid var(--maroon-dark); border-radius: 6px; padding: 6px; max-height: 80px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;}
+        .journal-container { 
+            background: #110808; border: 1px solid var(--maroon-dark); border-radius: 6px; padding: 6px; 
+            max-height: 90px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;
+            touch-action: pan-y; pointer-events: auto;
+        }
         .journal-container h4 { margin: 0; font-size: 0.65rem; color: var(--gold-accent); text-align: center; border-bottom: 1px solid #333; padding-bottom: 3px;}
         .journal-item { display: flex; justify-content: space-between; font-size: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 3px 0; }
         .journal-empty { text-align: center; font-size: 0.65rem; color: #555; font-style: italic; margin-top: 5px;}
+
+        /* Stats Modal */
+        #stats-modal {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 3000; flex-direction: column; justify-content: center; align-items: center;
+            padding: 20px; box-sizing: border-box;
+        }
+        .stats-card { background: var(--bg-panel); border: 1px solid var(--maroon-dark); border-radius: 12px; padding: 20px; width: 100%; max-width: 350px; }
+        .stats-card h2 { color: var(--gold-accent); margin-top: 0; font-family: 'Playfair Display', serif; }
+        .stats-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; }
+        .stats-row:last-child { border-bottom: none; }
+        .stats-label { color: var(--text-muted); }
+        .stats-value { color: var(--text-main); font-weight: 600; }
+        .rank-badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; margin-top: 8px; }
+
+        /* Daily Challenge */
+        #daily-challenge {
+            position: absolute; top: 35px; right: 10px;
+            background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold-accent);
+            color: var(--gold-accent); padding: 4px 10px; border-radius: 8px;
+            font-size: 0.6rem; font-weight: 600; z-index: 15; max-width: 180px; text-align: center;
+        }
+
+        /* Particle Canvas */
+        #particle-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1500;
+        }
+
+        /* Screenshot overlay for sharing */
+        #screenshot-overlay {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 3000; flex-direction: column; justify-content: center; align-items: center;
+            padding: 20px; box-sizing: border-box;
+        }
+        .share-btn { padding: 10px 20px; margin: 5px; border-radius: 8px; border: none; color: white; font-weight: 600; cursor: pointer; }
+        .share-wa { background: #25D366; }
+        .share-ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+        .share-close { background: transparent; border: 1px solid white; margin-top: 15px; }
+
+        /* Reset options */
+        .reset-options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .reset-btn { padding: 10px 20px; border-radius: 8px; border: 1px solid white; color: white; background: transparent; cursor: pointer; font-weight: 600; }
+        .reset-btn-free { border-color: var(--gold-accent); color: var(--gold-accent); }
+        .reset-btn-paid { border-color: var(--sell-color); color: var(--sell-color); }
+        .reset-cooldown { font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; }
     </style>
 </head>
 <body>
 
     <div id="app-container">
+        <canvas id="particle-canvas"></canvas>
         
-        <!-- TAUNTING MESSAGE (Loss > $50) -->
         <div id="taunt-loss" class="taunt-msg">📉 XAUUSD: "HAHAHA MENURUTKU BAKAL MARGIN CALL!!!"</div>
+        <div id="streak-display"></div>
+        <div id="daily-challenge"></div>
 
-        <!-- LAYAR BLUR KEAMANAN -->
+        <!-- News Ticker -->
+        <div id="news-ticker" style="display:none;">
+            <div id="news-ticker-content">📰 MEMUAT BERITA EKONOMI...</div>
+        </div>
+
         <div id="security-blur" class="overlay-screen">
             <h3 style="color:var(--sell-color); margin-bottom:10px;">⚠️ GAME DIJEDA</h3>
             <p style="color:var(--text-muted); font-size:0.85rem;">Terdeteksi screenshot, split screen, atau kehilangan fokus.<br>Klik untuk melanjutkan.</p>
         </div>
 
-        <!-- LAYAR MARGIN CALL -->
         <div id="mc-screen" class="overlay-screen">
             <div class="mc-text">MARGIN<br>CALL</div>
             <p style="color: #ddd; margin-top: 15px; font-size: 0.95rem;">Saldo Habis Tersapu Floating Loss!</p>
-            <button class="btn-dismiss" style="border-color:var(--sell-color); color:#fff; background: var(--maroon-dark);" onclick="resetAfterMC()">DEPOSIT ULANG $100</button>
+            <div class="reset-options">
+                <button class="reset-btn reset-btn-paid" onclick="resetAfterMC(true)">RESET $100 (Biaya $10)</button>
+                <button class="reset-btn reset-btn-free" id="btn-free-reset" onclick="resetAfterMC(false)" style="display:none;">RESET GRATIS</button>
+                <div class="reset-cooldown" id="reset-cooldown"></div>
+            </div>
         </div>
 
-        <!-- LAYAR SALDO KRITIS < 20% -->
         <div id="low-balance-screen" class="overlay-screen">
             <div class="warning-text">MASIH MAU DIHAJAR?<br>ATAU BELAJAR DULU SEBELUM ENTRY?</div>
             <p style="color: #ccc; margin-top: 15px; font-size: 0.85rem;">Peringatan: Saldo Anda tersisa kurang dari 20% modal awal.</p>
             <button class="btn-dismiss" onclick="document.getElementById('low-balance-screen').style.display='none'">LANJUTKAN</button>
         </div>
 
-        <!-- LAYAR PECUNDANG (3x SL) -->
+        <!-- LAYAR TRADER PROFESIONAL (3x TP, Profit > $50) -->
+        <div id="pro-screen" class="overlay-screen">
+            <div class="pro-text">TRADER<br>PROFESIONAL</div>
+            <p style="color: #ddd; margin-top: 15px; font-size: 0.95rem;">Mendapatkan 3x TP Beruntun dengan Total Profit Lebih Dari $50!</p>
+            <button class="btn-dismiss" style="border-color:var(--gold-accent); color:var(--gold-accent);" onclick="document.getElementById('pro-screen').style.display='none'">TERUSKAN TRADING</button>
+            <button class="btn-dismiss" style="border-color:#25D366; color:#25D366; margin-top:10px;" onclick="shareResult('pro')">SHARE HASIL</button>
+        </div>
+
         <div id="loser-screen" class="overlay-screen">
             <div class="loser-text">ANDA<br>PECUNDANG</div>
             <p style="color: #aaa; margin-top: 15px; font-size: 0.85rem;">Terkena Stop Loss 3x berturut-turut.</p>
             <button class="btn-dismiss" onclick="document.getElementById('loser-screen').style.display='none'">COBA LAGI</button>
+            <button class="btn-dismiss" style="border-color:#aaa; color:#aaa; margin-top:10px;" onclick="shareResult('loser')">SHARE HASIL</button>
         </div>
 
-        <!-- LAYAR MENANG (TARGET $30) -->
         <div id="winner-screen" class="overlay-screen">
             <div class="winner-text">TARGET TERCAPAI!</div>
             <p style="color: #ddd; margin-top: 15px; font-size: 0.95rem;">Profit +$30 Tercapai!<br>Anda diizinkan keluar dari game.</p>
             <button class="btn-dismiss" style="border-color:var(--gold-accent); color:var(--gold-accent);" onclick="allowExit()">TUTUP GAME</button>
+            <button class="btn-dismiss" style="border-color:#25D366; color:#25D366; margin-top:10px;" onclick="shareResult('winner')">SHARE HASIL</button>
         </div>
 
-        <!-- SECTION KUIS -->
+        <!-- Stats Modal -->
+        <div id="stats-modal">
+            <div class="stats-card">
+                <h2>📊 Statistik Trader</h2>
+                <div id="stats-content"></div>
+                <button class="btn-dismiss" style="margin-top:15px;" onclick="document.getElementById('stats-modal').style.display='none'">TUTUP</button>
+            </div>
+        </div>
+
+        <!-- Share Modal -->
+        <div id="screenshot-overlay">
+            <h2 style="color:var(--gold-accent); margin-bottom:15px;">Bagikan Hasil Trading</h2>
+            <button class="share-btn share-wa" onclick="shareTo('whatsapp')">📱 WhatsApp</button>
+            <button class="share-btn share-ig" onclick="shareTo('instagram')">📸 Instagram Story</button>
+            <button class="share-btn share-close" onclick="document.getElementById('screenshot-overlay').style.display='none'">BATAL</button>
+        </div>
+
         <div id="quiz-section">
             <div class="quiz-card">
                 <h2>Eksklusif Edukasi</h2>
@@ -193,14 +314,18 @@
             </div>
         </div>
 
-        <!-- SECTION GAME -->
         <div id="game-section">
             <div class="top-bar">
                 <div class="account-info">
                     <div class="info-box"><span class="info-label">Balance</span><span class="info-value" id="balance">$100.00</span></div>
                     <div class="info-box"><span class="info-label">Floating</span><span class="info-value" id="pnl">$0.00</span></div>
                 </div>
-                <button class="play-pause-btn" id="btn-play-pause" onclick="togglePlayPause()">⏸ PAUSE</button>
+                <div style="display:flex; gap: 6px;">
+                    <button class="play-pause-btn" id="btn-speed" onclick="toggleSpeed()">1x</button>
+                    <button class="play-pause-btn" id="btn-mute" onclick="toggleMute()">🔊</button>
+                    <button class="play-pause-btn" id="btn-stats" onclick="showStats()">📊</button>
+                    <button class="play-pause-btn" id="btn-play-pause" onclick="togglePlayPause()">⏸ PAUSE</button>
+                </div>
             </div>
             
             <div id="canvas-container" ondblclick="resetView()">
@@ -221,8 +346,20 @@
                             <input type="number" id="input-sl" placeholder="Cth: 10">
                         </div>
                     </div>
+                    <div style="margin-top:8px;">
+                        <label style="font-size:0.65rem; color:var(--gold-accent);">CATATAN ENTRY:</label>
+                        <textarea id="trade-notes" rows="2" placeholder="Alasan entry..."></textarea>
+                    </div>
                 </div>
-                <div class="trade-info" id="trade-status">Target: Capai total Profit +$30. SL 3x = ANDA PECUNDANG.</div>
+
+                <div class="chart-controls">
+                    <button class="chart-btn" id="btn-tf-1m" onclick="setTimeframe('1m')">1M</button>
+                    <button class="chart-btn" id="btn-tf-5m" onclick="setTimeframe('5m')">5M</button>
+                    <button class="chart-btn" id="btn-tf-15m" onclick="setTimeframe('15m')">15M</button>
+                    <button class="chart-btn" id="btn-sma" onclick="toggleIndicator('sma')">SMA</button>
+                    <button class="chart-btn" id="btn-ema" onclick="toggleIndicator('ema')">EMA</button>
+                </div>
+                
                 <div class="buttons">
                     <button class="btn btn-buy" id="btn-buy" onclick="openPosition('BUY')">BUY</button>
                     <button class="btn btn-sell" id="btn-sell" onclick="openPosition('SELL')">SELL</button>
@@ -241,7 +378,159 @@
 
     <script>
         /* ================= PENGAMANAN & ANTI-CHEAT ================= */
-        let consecutiveSL = 0; let canExit = false;
+        let consecutiveSL = 0; 
+        let consecutiveTP = 0;
+        let consecutiveTPProfit = 0;
+        let canExit = false;
+        let isMuted = false;
+        let currentTimeframe = '1m';
+        let showSMA = false;
+        let showEMA = false;
+
+        // Statistik Trader
+        let stats = {
+            totalTrades: 0, wins: 0, losses: 0, totalProfit: 0, totalLoss: 0,
+            bestTrade: 0, worstTrade: 0, consecutiveTPMax: 0, consecutiveSLMax: 0
+        };
+
+        function loadStats() {
+            const saved = localStorage.getItem('tradingGameStats');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                stats = { ...stats, ...parsed };
+            }
+        }
+
+        function saveStats() {
+            localStorage.setItem('tradingGameStats', JSON.stringify(stats));
+        }
+
+        function updateStats(pnl, reason) {
+            stats.totalTrades++;
+            if (pnl > 0) {
+                stats.wins++;
+                stats.totalProfit += pnl;
+                if (pnl > stats.bestTrade) stats.bestTrade = pnl;
+            } else if (pnl < 0) {
+                stats.losses++;
+                stats.totalLoss += Math.abs(pnl);
+                if (Math.abs(pnl) > stats.worstTrade) stats.worstTrade = Math.abs(pnl);
+            }
+            saveStats();
+        }
+
+        function getWinRate() {
+            return stats.totalTrades > 0 ? ((stats.wins / stats.totalTrades) * 100).toFixed(1) : 0;
+        }
+
+        function getProfitFactor() {
+            return stats.totalLoss > 0 ? (stats.totalProfit / stats.totalLoss).toFixed(2) : stats.totalProfit > 0 ? '∞' : '0.00';
+        }
+
+        function getRank() {
+            const winRate = parseFloat(getWinRate());
+            const pf = parseFloat(getProfitFactor()) || 0;
+            if (winRate >= 70 && pf >= 2) return { name: '🏆 TRADER LEGEND', color: '#ffd700', bg: 'rgba(255,215,0,0.2)' };
+            if (winRate >= 60 && pf >= 1.5) return { name: '💎 TRADER PROFESIONAL', color: '#d4af37', bg: 'rgba(212,175,55,0.2)' };
+            if (winRate >= 50 && pf >= 1) return { name: '⭐ TRADER ADVANCED', color: '#c0c0c0', bg: 'rgba(192,192,192,0.2)' };
+            if (winRate >= 40) return { name: '📈 TRADER INTERMEDIATE', color: '#cd7f32', bg: 'rgba(205,127,50,0.2)' };
+            return { name: '🎓 TRADER BEGINNER', color: '#8c7373', bg: 'rgba(140,115,115,0.2)' };
+        }
+
+        function showStats() {
+            const rank = getRank();
+            const content = `
+                <div class="stats-row"><span class="stats-label">Total Trade</span><span class="stats-value">${stats.totalTrades}</span></div>
+                <div class="stats-row"><span class="stats-label">Win / Loss</span><span class="stats-value">${stats.wins} / ${stats.losses}</span></div>
+                <div class="stats-row"><span class="stats-label">Win Rate</span><span class="stats-value">${getWinRate()}%</span></div>
+                <div class="stats-row"><span class="stats-label">Profit Factor</span><span class="stats-value">${getProfitFactor()}</span></div>
+                <div class="stats-row"><span class="stats-label">Total Profit</span><span class="stats-value profit">+$${stats.totalProfit.toFixed(2)}</span></div>
+                <div class="stats-row"><span class="stats-label">Total Loss</span><span class="stats-value loss">-$${stats.totalLoss.toFixed(2)}</span></div>
+                <div class="stats-row"><span class="stats-label">Best Trade</span><span class="stats-value profit">+$${stats.bestTrade.toFixed(2)}</span></div>
+                <div class="stats-row"><span class="stats-label">Worst Trade</span><span class="stats-value loss">-$${stats.worstTrade.toFixed(2)}</span></div>
+                <div style="text-align:center; margin-top:10px;">
+                    <span class="rank-badge" style="background:${rank.bg}; color:${rank.color}; border:1px solid ${rank.color};">${rank.name}</span>
+                </div>
+            `;
+            document.getElementById('stats-content').innerHTML = content;
+            document.getElementById('stats-modal').style.display = 'flex';
+        }
+
+        // Daily Challenge
+        function getDailyChallenge() {
+            const today = new Date().toDateString();
+            const saved = localStorage.getItem('dailyChallenge');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed.date === today) return parsed;
+            }
+            const targets = [15, 20, 25, 30];
+            const maxTrades = [5, 7, 10];
+            const challenge = {
+                date: today,
+                target: targets[Math.floor(Math.random() * targets.length)],
+                maxTrades: maxTrades[Math.floor(Math.random() * maxTrades.length)],
+                completed: false
+            };
+            localStorage.setItem('dailyChallenge', JSON.stringify(challenge));
+            return challenge;
+        }
+
+        let dailyChallenge = getDailyChallenge();
+        let dailyTrades = 0;
+        let dailyProfit = 0;
+
+        function updateDailyChallenge(pnl) {
+            if (dailyChallenge.completed) return;
+            dailyTrades++;
+            dailyProfit += pnl;
+            if (dailyProfit >= dailyChallenge.target && dailyTrades <= dailyChallenge.maxTrades) {
+                dailyChallenge.completed = true;
+                localStorage.setItem('dailyChallenge', JSON.stringify(dailyChallenge));
+                // Show celebration
+                const proScreen = document.getElementById('pro-screen');
+                proScreen.querySelector('.pro-text').innerHTML = 'DAILY<br>CHALLENGE<br>COMPLETE!';
+                proScreen.querySelector('p').innerText = `Target $${dailyChallenge.target} tercapai dalam ${dailyTrades} trade!`;
+                proScreen.style.display = 'flex';
+                setTimeout(() => {
+                    proScreen.style.display = 'none';
+                    proScreen.querySelector('.pro-text').innerHTML = 'TRADER<br>PROFESIONAL';
+                    proScreen.querySelector('p').innerText = 'Mendapatkan 3x TP Beruntun dengan Total Profit Lebih Dari $50!';
+                }, 3000);
+            }
+        }
+
+        function showDailyChallenge() {
+            const el = document.getElementById('daily-challenge');
+            if (dailyChallenge.completed) {
+                el.innerHTML = '✅ CHALLENGE<br>SELESAI';
+                el.style.borderColor = '#2ecc71';
+                el.style.color = '#2ecc71';
+            } else {
+                el.innerHTML = `🎯 ${dailyProfit}/$${dailyChallenge.target} (${dailyTrades}/${dailyChallenge.maxTrades})`;
+                el.style.borderColor = 'var(--gold-accent)';
+                el.style.color = 'var(--gold-accent)';
+            }
+            el.style.display = 'block';
+        }
+
+        // Reset cooldown
+        let lastResetTime = parseInt(localStorage.getItem('lastFreeReset') || '0');
+        function canFreeReset() {
+            const now = Date.now();
+            const cooldown = 24 * 60 * 60 * 1000; // 24 hours
+            return (now - lastResetTime) >= cooldown;
+        }
+
+        function getResetCooldownText() {
+            if (canFreeReset()) return '✅ RESET GRATIS TERSEDIA';
+            const now = Date.now();
+            const cooldown = 24 * 60 * 60 * 1000;
+            const remaining = cooldown - (now - lastResetTime);
+            const hours = Math.floor(remaining / (1000 * 60 * 60));
+            const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+            return `⏳ Reset gratis dalam ${hours}j ${minutes}m`;
+        }
 
         window.addEventListener('beforeunload', function (e) {
             if(!canExit && balance < 130) { e.preventDefault(); e.returnValue = 'Target profit $30 belum tercapai!'; }
@@ -267,33 +556,231 @@
             this.style.display = 'none';
         });
 
-        /* ================= 25 BANK SOAL KUIS ================= */
+        /* ================= SOUND SYSTEM ================= */
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function playSound(type) {
+            if (isMuted) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            switch(type) {
+                case 'tp':
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+                    osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.4);
+                    break;
+                case 'sl':
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.3);
+                    break;
+                case 'mc':
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(80, audioCtx.currentTime + 0.2);
+                    osc.frequency.setValueAtTime(100, audioCtx.currentTime + 0.4);
+                    gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.6);
+                    break;
+                case 'click':
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.05);
+                    break;
+                case 'win':
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.15);
+                    osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.3);
+                    osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.45);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.8);
+                    break;
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('btn-mute').innerText = isMuted ? '🔇' : '🔊';
+            if (!isMuted) playSound('click');
+        }
+
+        /* ================= PARTICLE SYSTEM ================= */
+        const particleCanvas = document.getElementById('particle-canvas');
+        const pCtx = particleCanvas.getContext('2d');
+        let particles = [];
+
+        function resizeParticleCanvas() {
+            particleCanvas.width = particleCanvas.parentElement.clientWidth;
+            particleCanvas.height = particleCanvas.parentElement.clientHeight;
+        }
+
+        function createConfetti() {
+            const colors = ['#d4af37', '#ffd700', '#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24'];
+            for (let i = 0; i < 100; i++) {
+                particles.push({
+                    x: Math.random() * particleCanvas.width,
+                    y: -10,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: Math.random() * 3 + 2,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 5 + 2,
+                    life: 1,
+                    decay: Math.random() * 0.01 + 0.005
+                });
+            }
+        }
+
+        function createShockwave() {
+            const cx = particleCanvas.width / 2;
+            const cy = particleCanvas.height / 2;
+            for (let i = 0; i < 50; i++) {
+                const angle = (Math.PI * 2 / 50) * i;
+                particles.push({
+                    x: cx, y: cy,
+                    vx: Math.cos(angle) * 8,
+                    vy: Math.sin(angle) * 8,
+                    color: '#ff0000',
+                    size: 4,
+                    life: 1,
+                    decay: 0.03
+                });
+            }
+        }
+
+        function createRedFlash() {
+            const flash = document.createElement('div');
+            flash.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(255,0,0,0.3);z-index:1400;pointer-events:none;animation:flashFade 0.5s forwards;';
+            document.getElementById('app-container').appendChild(flash);
+            setTimeout(() => flash.remove(), 500);
+        }
+
+        // Add flashFade animation
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = '@keyframes flashFade { from { opacity: 1; } to { opacity: 0; } }';
+        document.head.appendChild(styleSheet);
+
+        function animateParticles() {
+            pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+            particles = particles.filter(p => p.life > 0);
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.1;
+                p.life -= p.decay;
+                pCtx.globalAlpha = p.life;
+                pCtx.fillStyle = p.color;
+                pCtx.fillRect(p.x, p.y, p.size, p.size);
+            });
+            pCtx.globalAlpha = 1;
+            if (particles.length > 0) requestAnimationFrame(animateParticles);
+        }
+
+        function triggerParticles(type) {
+            resizeParticleCanvas();
+            if (type === 'confetti') createConfetti();
+            else if (type === 'shockwave') createShockwave();
+            animateParticles();
+        }
+
+        /* ================= NEWS TICKER ================= */
+        const newsHeadlines = [
+            "📊 FOMC akan mengumumkan kebijakan suku bunga pekan ini",
+            "📉 DXY menguat 0.5%, tekanan ke emas meningkat",
+            "📈 NFP aktual 250K vs forecast 180K, USD kuat",
+            "🏦 The Fed mempertimbangkan hawkish stance",
+            "📉 Inflasi AS turun ke 2.4%, emas dapat dukungan",
+            "📈 Yield Treasury 10Y naik ke 4.2%",
+            "🌍 Konflik geopolitik meningkatkan permintaan safe haven",
+            "📊 Pasar menunggu rilis CPI bulan ini",
+            "💹 S&P 500 mencapai all-time high",
+            "🛢️ Harga minyak naik 3% akibat supply concern"
+        ];
+
+        let currentNews = [];
+        let newsInterval;
+
+        function startNewsTicker() {
+            currentNews = [...newsHeadlines].sort(() => Math.random() - 0.5).slice(0, 5);
+            const tickerContent = document.getElementById('news-ticker-content');
+            tickerContent.textContent = '📰 ' + currentNews.join('     🟦     ');
+            document.getElementById('news-ticker').style.display = 'flex';
+            
+            // News affects volatility
+            newsInterval = setInterval(() => {
+                if (Math.random() < 0.3) {
+                    trendDrift += (Math.random() - 0.5) * 2;
+                    // Show news flash
+                    showNewsFlash(currentNews[Math.floor(Math.random() * currentNews.length)]);
+                }
+            }, 5000);
+        }
+
+        function showNewsFlash(text) {
+            const flash = document.createElement('div');
+            flash.style.cssText = `position:absolute;top:30px;left:50%;transform:translateX(-50%);background:rgba(212,175,55,0.9);color:#000;padding:6px 14px;border-radius:6px;font-size:0.7rem;font-weight:600;z-index:20;animation:newsFlash 3s forwards;`;
+            flash.textContent = text;
+            document.getElementById('app-container').appendChild(flash);
+            setTimeout(() => flash.remove(), 3000);
+        }
+
+        // Add newsFlash animation
+        const newsStyle = document.createElement('style');
+        newsStyle.textContent = '@keyframes newsFlash { 0% { opacity: 0; transform: translateX(-50%) translateY(-10px); } 10% { opacity: 1; transform: translateX(-50%) translateY(0); } 80% { opacity: 1; } 100% { opacity: 0; } }';
+        document.head.appendChild(newsStyle);
+
+        /* ================= SHARE SYSTEM ================= */
+        let shareData = { type: '', pnl: 0, balance: 0 };
+
+        function shareResult(type) {
+            shareData.type = type;
+            shareData.pnl = type === 'winner' ? 30 : type === 'pro' ? 50 : 0;
+            shareData.balance = balance;
+            document.getElementById('screenshot-overlay').style.display = 'flex';
+        }
+
+        function shareTo(platform) {
+            const text = getShareText();
+            if (platform === 'whatsapp') {
+                window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+            } else if (platform === 'instagram') {
+                alert('Untuk Instagram: Screenshot halaman ini dan bagikan ke Story!\n\n' + text);
+            }
+            document.getElementById('screenshot-overlay').style.display = 'none';
+        }
+
+        function getShareText() {
+            const rank = getRank();
+            switch(shareData.type) {
+                case 'winner': return `🎉 Target Tercapai!\nProfit +$30 di VIP Trading Simulator!\nBalance: $${shareData.balance.toFixed(2)}\nRank: ${rank.name}`;
+                case 'pro': return `🏆 TRADER PROFESIONAL!\n3x TP Streak dengan Profit > $50!\nBalance: $${shareData.balance.toFixed(2)}\nRank: ${rank.name}`;
+                case 'loser': return `💀 ANDA PECUNDANG!\n3x SL berturut-turut di VIP Trading Simulator.\nRank: ${rank.name}`;
+                default: return `📊 VIP Trading Simulator\nBalance: $${shareData.balance.toFixed(2)}\nRank: ${rank.name}`;
+            }
+        }
+
+        /* ================= KUIS EDUKASI ================= */
         const quizData = [
             { question: "Apa kepanjangan dari FOMC?", options: ["Federal Open Market Committee", "Federal Online Market Council", "Financial Open Market Committee", "Federal Operations Monetary Council"], answer: 0, explanation: "FOMC adalah komite di Federal Reserve yang menentukan arah kebijakan moneter AS." },
             { question: "Apa fungsi utama DXY dalam analisis trading?", options: ["Mengukur kekuatan USD", "Mengukur harga emas", "Mengukur yield obligasi", "Mengukur inflasi global"], answer: 0, explanation: "DXY mengukur nilai USD terhadap sekeranjang mata uang utama." },
-            { question: "Jika DXY menguat secara signifikan, apa yang secara umum dapat terjadi pada XAU/USD?", options: ["Emas mendapat tekanan", "Emas pasti naik", "Emas tidak dapat bergerak", "Spread emas selalu turun"], answer: 0, explanation: "Penguatan Dolar sering memberikan tekanan terhadap XAU/USD." },
-            { question: "Apa kepanjangan dari NFP?", options: ["Nonfarm Payrolls", "National Financial Policy", "Net Federal Position", "Nonfarm Price"], answer: 0, explanation: "NFP adalah Nonfarm Payrolls, data tenaga kerja AS penting." },
-            { question: "Jika NFP aktual jauh lebih tinggi daripada forecast, apa yang biasanya menunjukkan kondisi tersebut?", options: ["Pasar tenaga kerja lebih kuat dari perkiraan", "Pasar tenaga kerja pasti memburuk", "Inflasi pasti turun", "USD pasti langsung crash"], answer: 0, explanation: "NFP tinggi menunjukkan penciptaan pekerjaan yang kuat." },
-            { question: "Apa hubungan umum antara harga obligasi dan yield?", options: ["Berbanding terbalik", "Selalu bergerak searah", "Tidak memiliki hubungan", "Selalu bergerak dengan rasio 1:1"], answer: 0, explanation: "Ketika harga obligasi naik, yield turun, dan sebaliknya." },
-            { question: "US02Y paling sering digunakan untuk melihat apa dalam analisis makro?", options: ["Ekspektasi suku bunga jangka pendek", "Harga minyak dunia", "Kinerja perusahaan teknologi", "Jumlah cadangan emas"], answer: 0, explanation: "Yield 2 tahun sangat sensitif terhadap suku bunga jangka pendek Fed." },
-            { question: "Apa yang biasanya dimaksud dengan US10Y?", options: ["Yield Treasury AS 10 tahun", "Harga emas 10 tahun", "Indeks USD 10 negara", "Suku bunga Fed 10%"], answer: 0, explanation: "US10Y adalah yield obligasi Treasury AS tenor 10 tahun." },
-            { question: "Apa yang dimaksud dengan hawkish dalam kebijakan moneter?", options: ["Cenderung mendukung kebijakan moneter ketat", "Cenderung mendukung pencetakan uang tanpa batas", "Cenderung menurunkan suku bunga secara agresif", "Tidak memiliki hubungan dengan suku bunga"], answer: 0, explanation: "Hawkish berarti kebijakan ketat/naikkan suku bunga untuk inflasi." },
-            { question: "Apa yang dimaksud dengan dovish?", options: ["Cenderung mendukung kebijakan moneter lebih longgar", "Selalu menaikkan suku bunga", "Selalu memperkuat USD", "Mengurangi likuiditas secara agresif"], answer: 0, explanation: "Dovish berarti kebijakan longgar/turunkan suku bunga." },
-            { question: "Apa fungsi utama stop loss?", options: ["Membatasi kerugian", "Menjamin profit", "Menaikkan leverage", "Menghilangkan spread"], answer: 0, explanation: "Stop loss membatasi kerugian saat arah market berlawanan." },
-            { question: "Apa fungsi utama take profit?", options: ["Menutup posisi pada target keuntungan", "Membatasi kerugian", "Menambah leverage", "Menghilangkan risiko"], answer: 0, explanation: "Take profit mengamankan profit di target tertentu." },
-            { question: "Apa yang dimaksud dengan risk-reward ratio 1:3?", options: ["Risiko 1 untuk target keuntungan 3", "Risiko 3 untuk target keuntungan 1", "Risiko dan profit sama besar", "Tidak memiliki risiko"], answer: 0, explanation: "Risiko 1 unit mengejar profit 3 unit." },
-            { question: "Apa yang dimaksud dengan leverage?", options: ["Kemampuan mengendalikan posisi lebih besar dengan modal relatif lebih kecil", "Jaminan mendapatkan profit", "Biaya transaksi broker", "Batas maksimum stop loss"], answer: 0, explanation: "Leverage memperbesar daya beli dan risiko margin." },
-            { question: "Apa yang dimaksud dengan spread?", options: ["Selisih antara harga bid dan ask", "Selisih antara profit dan loss", "Jumlah leverage", "Ukuran stop loss"], answer: 0, explanation: "Spread adalah selisih harga jual dan beli dari broker." },
-            { question: "Apa yang dimaksud dengan liquidity sweep?", options: ["Harga mengambil likuiditas di sekitar level tertentu", "Harga tidak bergerak sama sekali", "Broker menutup seluruh akun", "Indikator menghapus semua candle"], answer: 0, explanation: "Market mengambil pending order di area high/low." },
-            { question: "Apa yang dimaksud dengan Break of Structure (BoS)?", options: ["Penembusan struktur harga penting", "Penutupan akun trading", "Perubahan spread broker", "Rilis data ekonomi"], answer: 0, explanation: "BoS menandakan kelanjutan tren melalui penembusan struktur." },
-            { question: "Jika market membentuk Higher High dan Higher Low secara konsisten, kondisi tersebut umumnya disebut...", options: ["Uptrend", "Downtrend", "Bearish", "Sideways"], answer: 0, explanation: "Struktur harga uptrend / bullish." },
-            { question: "Jika market membentuk Lower High dan Lower Low secara konsisten, kondisi tersebut umumnya disebut...", options: ["Downtrend", "Uptrend", "Bullish breakout", "Accumulation pasti"], answer: 0, explanation: "Struktur harga downtrend / bearish." },
-            { question: "Apa yang dimaksud dengan support?", options: ["Area harga yang berpotensi mendapat tekanan beli", "Area yang selalu ditembus", "Harga tertinggi sepanjang masa", "Indikator untuk mengukur inflasi"], answer: 0, explanation: "Support adalah area pantulan harga ke atas." },
-            { question: "Apa yang dimaksud dengan resistance?", options: ["Area harga yang berpotensi mendapat tekanan jual", "Area yang pasti menjadi titik buy", "Harga terendah market", "Ukuran leverage"], answer: 0, explanation: "Resistance adalah area batasan harga naik." },
-            { question: "Jika modal trader $100 dan risiko per transaksi 2%, berapa nominal risiko yang ditetapkan?", options: ["$2", "$5", "$10", "$20"], answer: 0, explanation: "2% dari $100 adalah $2." },
-            { question: "Apa yang dimaksud dengan overtrading?", options: ["Melakukan trading berlebihan tanpa alasan atau setup yang kuat", "Trading hanya satu kali", "Menggunakan stop loss", "Menganalisis market sebelum entry"], answer: 0, explanation: "Trading membabi buta tanpa rencana matang." },
-            { question: "Mengapa actual dan forecast penting ketika membaca news?", options: ["Karena pasar sering merespons kejutan terhadap ekspektasi", "Karena forecast selalu benar", "Karena actual tidak pernah berubah", "Karena forecast menentukan harga secara otomatis"], answer: 0, explanation: "Pasar bereaksi pada selisih antara ekspektasi dan realita data." },
-            { question: "Jika data ekonomi AS sangat kuat dan pasar memperkirakan Fed menjadi lebih hawkish, kombinasi mana yang secara umum dapat memberikan tekanan kepada emas?", options: ["DXY naik dan yield Treasury naik", "DXY turun dan yield turun", "DXY turun dan yield tetap", "DXY dan yield selalu turun"], answer: 0, explanation: "Dolar kuat dan yield tinggi menekan harga emas (XAU/USD)." }
+            { question: "Jika DXY menguat secara signifikan, apa yang secara umum dapat terjadi pada XAU/USD?", options: ["Emas mendapat tekanan", "Emas pasti naik", "Emas tidak dapat bergerak", "Spread emas selalu turun"], answer: 0, explanation: "Penguatan Dolar sering memberikan tekanan terhadap XAU/USD." }
         ];
 
         function shuffle(array) { const arr = [...array]; for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
@@ -346,9 +833,38 @@
         }
         startQuiz();
 
-        /* ================= UI MANUAL TP/SL ================= */
+        /* ================= UI CONTROLS ================= */
         function toggleManualInput() {
             document.getElementById('manual-inputs').style.display = document.getElementById('auto-rr').checked ? 'none' : 'flex';
+        }
+
+        function togglePlayPause() {
+            isMarketPlaying = !isMarketPlaying;
+            document.getElementById('btn-play-pause').innerText = isMarketPlaying ? "⏸ PAUSE" : "▶️ PLAY";
+        }
+
+        function toggleSpeed() {
+            if (gameSpeed === 1) gameSpeed = 2;
+            else if (gameSpeed === 2) gameSpeed = 5;
+            else gameSpeed = 1;
+            document.getElementById('btn-speed').innerText = gameSpeed + "x";
+        }
+
+        function setTimeframe(tf) {
+            currentTimeframe = tf;
+            document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-tf-' + tf).classList.add('active');
+        }
+
+        function toggleIndicator(ind) {
+            if (ind === 'sma') {
+                showSMA = !showSMA;
+                document.getElementById('btn-sma').classList.toggle('active', showSMA);
+            } else if (ind === 'ema') {
+                showEMA = !showEMA;
+                document.getElementById('btn-ema').classList.toggle('active', showEMA);
+            }
+            drawChart();
         }
 
         /* ================= GAME LOGIC & CANVAS ================= */
@@ -360,12 +876,12 @@
         let currentPrice = 2050; 
         let ticks = 0;
         let isMarketPlaying = true; 
+        let gameSpeed = 1;
         let visibleCandlesCount = 50; 
-        
         let scrollOffset = 0; 
         let priceOffset = 0; 
-        let currentRange = 20; 
-
+        let priceZoom = 1;
+        
         let balance = 100.00;
         let position = null; 
         let entryPrice = 0, tpPrice = 0, slPrice = 0;
@@ -374,6 +890,7 @@
 
         let trendDrift = 0;
         let trendDuration = 0;
+        let newsActive = false;
 
         function generateHistory() {
             candles = []; let val = currentPrice;
@@ -389,40 +906,48 @@
             currentPrice = val;
         }
 
-        function togglePlayPause() {
-            isMarketPlaying = !isMarketPlaying;
-            document.getElementById('btn-play-pause').innerText = isMarketPlaying ? "⏸ PAUSE" : "▶️ PLAY";
-        }
-
         function resetView() {
-            scrollOffset = 0; priceOffset = 0; drawChart();
+            scrollOffset = 0; priceOffset = 0; priceZoom = 1; drawChart();
         }
 
-        /* LOGIKA GESER & PAN */
-        let isDragging = false; let lastX = 0; let lastY = 0;
-        canvas.addEventListener('pointerdown', (e) => { isDragging = true; lastX = e.clientX; lastY = e.clientY; });
-        canvas.addEventListener('pointerup', () => { isDragging = false; });
-        canvas.addEventListener('pointerleave', () => { isDragging = false; });
+        let isDragging = false; 
+        let isDraggingScale = false; 
+        let lastX = 0; let lastY = 0;
+        
+        canvas.addEventListener('pointerdown', (e) => { 
+            if (e.clientX > width - 65) isDraggingScale = true;
+            else isDragging = true;
+            lastX = e.clientX; lastY = e.clientY; 
+        });
+        canvas.addEventListener('pointerup', () => { isDragging = false; isDraggingScale = false; });
+        canvas.addEventListener('pointerleave', () => { isDragging = false; isDraggingScale = false; });
         canvas.addEventListener('pointermove', (e) => {
+            if (isDraggingScale) {
+                let deltaY = e.clientY - lastY;
+                priceZoom -= deltaY * 0.01;
+                if (priceZoom < 0.1) priceZoom = 0.1;
+                if (priceZoom > 10) priceZoom = 10;
+                lastY = e.clientY;
+                drawChart();
+                return;
+            }
             if (!isDragging) return;
             let deltaX = e.clientX - lastX;
             let deltaY = e.clientY - lastY;
-            
             let shiftX = Math.round(deltaX / ((width - 65) / visibleCandlesCount)); 
             if (shiftX !== 0) {
                 scrollOffset += shiftX; 
-                if (scrollOffset < -30) scrollOffset = -30; // Bisa geser ke kanan yang kosong
+                if (scrollOffset < -30) scrollOffset = -30; 
                 if (scrollOffset > candles.length - visibleCandlesCount) scrollOffset = candles.length - visibleCandlesCount;
                 lastX = e.clientX; 
             }
             if(Math.abs(deltaY) > 0) {
-                priceOffset += (deltaY / height) * currentRange;
+                priceOffset += (deltaY / height) * 20;
                 lastY = e.clientY;
             }
             drawChart(); 
         });
 
-        /* LOGIKA ZOOM */
         function zoom(direction) {
             if(direction > 0) visibleCandlesCount = Math.max(20, visibleCandlesCount - 5); 
             else visibleCandlesCount = Math.min(150, visibleCandlesCount + 5); 
@@ -452,7 +977,7 @@
             canvas.width = width; canvas.height = height; drawChart();
         }
 
-        /* --- LOGIKA REAL-TIME MARGIN CALL (SALDO HABIS SAAT FLOATING) --- */
+        /* --- MARGIN CALL --- */
         function checkMarginCall() {
             if (!position) return false;
             let currentPnL = calculatePnL();
@@ -466,62 +991,120 @@
         function triggerMarginCall(lossAmt) {
             balance = 0;
             document.getElementById('balance').innerText = '$0.00';
-            
             addJournal(position, "MC", lossAmt);
-            position = null; entryAbsoluteIndex = -1; consecutiveSL = 0; 
-            
+            position = null; entryAbsoluteIndex = -1; consecutiveSL = 0; consecutiveTP = 0; consecutiveTPProfit = 0;
             document.getElementById('pnl').innerText = '$0.00'; 
             document.getElementById('pnl').className = 'info-value';
             document.getElementById('btn-buy').style.display = 'block'; 
             document.getElementById('btn-sell').style.display = 'block';
             document.getElementById('btn-close').style.display = 'none'; 
             document.querySelector('.trade-settings').style.display = 'block';
-            document.getElementById('trade-status').innerHTML = `SALDO HABIS!`;
-            
-            // Tampilkan Layar Getar Margin Call
+            playSound('mc');
+            createShockwave();
+            triggerRedFlash();
+            updateResetButtons();
             document.getElementById('mc-screen').style.display = 'flex';
             drawChart();
         }
 
-        function resetAfterMC() {
+        function triggerRedFlash() {
+            const container = document.getElementById('app-container');
+            const flash = document.createElement('div');
+            flash.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(255,0,0,0.4);z-index:1400;pointer-events:none;animation:flashFade 0.6s forwards;';
+            container.appendChild(flash);
+            setTimeout(() => flash.remove(), 600);
+        }
+
+        function updateResetButtons() {
+            const btnFree = document.getElementById('btn-free-reset');
+            const cooldownText = document.getElementById('reset-cooldown');
+            if (canFreeReset()) {
+                btnFree.style.display = 'block';
+                cooldownText.textContent = '✅ Reset gratis tersedia!';
+            } else {
+                btnFree.style.display = 'none';
+                cooldownText.textContent = getResetCooldownText();
+            }
+        }
+
+        function resetAfterMC(paid) {
+            if (paid) {
+                balance = 100;
+            } else {
+                if (!canFreeReset()) {
+                    alert('Reset gratis belum tersedia!');
+                    return;
+                }
+                balance = 100;
+                lastResetTime = Date.now();
+                localStorage.setItem('lastFreeReset', lastResetTime.toString());
+            }
             document.getElementById('mc-screen').style.display = 'none';
             document.getElementById('taunt-loss').classList.remove('show'); tauntShown = false;
-            balance = 100.00;
             document.getElementById('balance').innerText = '$100.00';
-            document.getElementById('trade-status').innerHTML = `Target: Capai total Profit +$30.`;
             resetView();
+            consecutiveSL = 0; consecutiveTP = 0; consecutiveTPProfit = 0;
+        }
+
+        function resetAfterMC(paid) {
+            if (paid) {
+                balance = Math.max(0, balance - 10); // Biaya $10
+            } else {
+                if (!canFreeReset()) {
+                    alert('Reset gratis belum tersedia!');
+                    return;
+                }
+                lastResetTime = Date.now();
+                localStorage.setItem('lastFreeReset', lastResetTime.toString());
+            }
+            balance = 100;
+            document.getElementById('mc-screen').style.display = 'none';
+            document.getElementById('taunt-loss').classList.remove('show'); tauntShown = false;
+            document.getElementById('balance').innerText = '$' + balance.toLocaleString('en-US', {minimumFractionDigits: 2});
+            resetView();
+            consecutiveSL = 0; consecutiveTP = 0; consecutiveTPProfit = 0;
         }
 
         function startGame() {
             document.getElementById('quiz-section').style.display = 'none'; document.getElementById('game-section').style.display = 'flex';
+            loadStats();
+            dailyChallenge = getDailyChallenge();
+            showDailyChallenge();
+            startNewsTicker();
             generateHistory(); window.addEventListener('resize', resizeCanvas); resizeCanvas();
+            updateResetButtons();
+            
+            const tickMs = currentTimeframe === '1m' ? 100 : currentTimeframe === '5m' ? 500 : 1000;
             
             setInterval(() => {
                 if(!isMarketPlaying) return;
 
-                if(trendDuration <= 0) { trendDrift = (Math.random() - 0.5) * 2.5; trendDuration = Math.floor(Math.random() * 50) + 20; }
-                trendDuration--;
+                for(let s = 0; s < gameSpeed; s++) {
+                    if(trendDuration <= 0) { trendDrift = (Math.random() - 0.5) * 2.5; trendDuration = Math.floor(Math.random() * 50) + 20; }
+                    trendDuration--;
 
-                let fluctuation = (Math.random() - 0.5) * 4 + trendDrift;
-                currentPrice += fluctuation; ticks++;
-                let lastCandle = candles[candles.length - 1];
+                    let fluctuation = (Math.random() - 0.5) * 4 + trendDrift;
+                    if (newsActive) fluctuation *= 1.5; // Higher volatility during news
+                    currentPrice += fluctuation; ticks++;
+                    let lastCandle = candles[candles.length - 1];
 
-                if (ticks >= 20) {
-                    candles.push({ open: currentPrice, high: currentPrice, low: currentPrice, close: currentPrice });
-                    if(candles.length > 1500) { candles.shift(); if(entryAbsoluteIndex > 0) entryAbsoluteIndex--; }
-                    ticks = 0;
-                } else {
-                    lastCandle.close = currentPrice;
-                    lastCandle.high = Math.max(lastCandle.high, currentPrice);
-                    lastCandle.low = Math.min(lastCandle.low, currentPrice);
-                }
+                    if (ticks >= 20) {
+                        candles.push({ open: currentPrice, high: currentPrice, low: currentPrice, close: currentPrice });
+                        if(candles.length > 1500) { candles.shift(); if(entryAbsoluteIndex > 0) entryAbsoluteIndex--; }
+                        ticks = 0;
+                    } else {
+                        lastCandle.close = currentPrice;
+                        lastCandle.high = Math.max(lastCandle.high, currentPrice);
+                        lastCandle.low = Math.min(lastCandle.low, currentPrice);
+                    }
 
-                if (position) { 
-                    let isMC = checkMarginCall();
-                    if(!isMC) { updatePnL(); checkSLTP(); }
+                    if (position) { 
+                        let isMC = checkMarginCall();
+                        if(!isMC) { updatePnL(); checkSLTP(); }
+                    }
                 }
                 requestAnimationFrame(drawChart);
-            }, 100);
+            }, tickMs);
         }
 
         function drawChart() {
@@ -534,39 +1117,89 @@
             let endIndex = Math.min(candles.length, windowStartIndex + visibleCandlesCount);
             let visibleData = candles.slice(startIndex, endIndex);
 
-            let minP, maxP;
-            // FIX MASALAH SKALA HILANG JIKA GESER KE AREA KOSONG
+            let baseMin, baseMax;
             if(visibleData.length > 0) {
-                minP = Math.min(...visibleData.map(c => c.low)) - 10 + priceOffset;
-                maxP = Math.max(...visibleData.map(c => c.high)) + 10 + priceOffset;
+                baseMin = Math.min(...visibleData.map(c => c.low)) - 10;
+                baseMax = Math.max(...visibleData.map(c => c.high)) + 10;
             } else {
-                minP = currentPrice - 10 + priceOffset;
-                maxP = currentPrice + 10 + priceOffset;
+                baseMin = currentPrice - 10;
+                baseMax = currentPrice + 10;
             }
             
-            currentRange = maxP - minP || 1;
+            let midPrice = (baseMax + baseMin) / 2;
+            let originalRange = baseMax - baseMin;
+            let currentRange = originalRange / priceZoom;
+            if(currentRange === 0) currentRange = 1;
+
+            let minP = midPrice - (currentRange / 2) + priceOffset;
+            let maxP = midPrice + (currentRange / 2) + priceOffset;
+
             const getY = p => height - ((p - minP) / currentRange) * height;
             
             let candleSpacing = chartWidth / visibleCandlesCount;
             let candleWidth = candleSpacing * 0.6;
 
-            // DRAW GRID DALAM CHART
+            // DRAW GRID
             ctx.lineWidth = 1;
             for(let i=0; i<=6; i++) {
                 let y = height * (i/6);
                 ctx.strokeStyle = '#1a0d0d'; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(chartWidth, y); ctx.stroke();
             }
 
-            // GAMBAR KOTAK BUY / SELL (Area Profit & Loss)
+            // DRAW INDICATORS
+            if (showSMA || showEMA) {
+                const smaPeriod = 20;
+                const emaPeriod = 20;
+                const multiplier = 2 / (emaPeriod + 1);
+                
+                if (showSMA) {
+                    ctx.strokeStyle = '#ffa500';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    let started = false;
+                    for (let i = smaPeriod - 1; i < candles.length; i++) {
+                        let sum = 0;
+                        for (let j = i - smaPeriod + 1; j <= i; j++) sum += candles[j].close;
+                        let sma = sum / smaPeriod;
+                        let screenIndex = i - windowStartIndex;
+                        if (screenIndex >= 0 && screenIndex <= visibleCandlesCount) {
+                            let x = screenIndex * candleSpacing + candleSpacing / 2;
+                            let y = getY(sma);
+                            if (!started) { ctx.moveTo(x, y); started = true; }
+                            else ctx.lineTo(x, y);
+                        }
+                    }
+                    ctx.stroke();
+                }
+
+                if (showEMA) {
+                    ctx.strokeStyle = '#00bfff';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    let ema = candles[0].close;
+                    let started = false;
+                    for (let i = 0; i < candles.length; i++) {
+                        ema = (candles[i].close - ema) * multiplier + ema;
+                        let screenIndex = i - windowStartIndex;
+                        if (screenIndex >= 0 && screenIndex <= visibleCandlesCount) {
+                            let x = screenIndex * candleSpacing + candleSpacing / 2;
+                            let y = getY(ema);
+                            if (!started) { ctx.moveTo(x, y); started = true; }
+                            else ctx.lineTo(x, y);
+                        }
+                    }
+                    ctx.stroke();
+                }
+            }
+
+            // GAMBAR KOTAK BUY / SELL
             if (position && entryAbsoluteIndex >= 0) {
                 let screenIndex = entryAbsoluteIndex - windowStartIndex;
                 let entryX = screenIndex * candleSpacing;
-                
                 let boxWidth = chartWidth - entryX;
                 if(boxWidth > 0) {
                     let yTP = getY(tpPrice);
                     let ySL = getY(slPrice);
-
                     ctx.fillStyle = 'rgba(30, 130, 76, 0.2)'; 
                     ctx.fillRect(entryX, yTP, boxWidth, getY(entryPrice) - yTP); 
                     ctx.fillStyle = 'rgba(153, 31, 31, 0.2)'; 
@@ -579,17 +1212,13 @@
                 let virtualIndex = startIndex + i;
                 let screenIndex = virtualIndex - windowStartIndex;
                 let x = screenIndex * candleSpacing + candleSpacing / 2;
-                
                 let isBull = c.close >= c.open;
                 let color = isBull ? '#1e824c' : '#991f1f'; 
-                
                 ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 1.5;
                 ctx.beginPath(); ctx.moveTo(x, getY(c.high)); ctx.lineTo(x, getY(c.low)); ctx.stroke();
-                
                 let bodyTop = getY(Math.max(c.open, c.close));
                 let bodyBottom = getY(Math.min(c.open, c.close));
                 let bodyHeight = Math.max(2, bodyBottom - bodyTop);
-                
                 if(isBull) ctx.strokeRect(x - candleWidth/2, bodyTop, candleWidth, bodyHeight);
                 else ctx.fillRect(x - candleWidth/2, bodyTop, candleWidth, bodyHeight);
             });
@@ -604,12 +1233,12 @@
                 drawLine(getY(currentPrice), '#f0e6e6', currentPrice.toFixed(1), chartWidth, true);
             }
 
-            // BLOK BACKGROUND UNTUK SKALA HARGA AGAR LILIN MENGHILANG DI BAWAHNYA
-            ctx.fillStyle = 'var(--bg-base)';
+            // BLOK BACKGROUND SKALA HARGA
+            ctx.fillStyle = '#050505';
             ctx.fillRect(chartWidth, 0, width - chartWidth, height);
             ctx.strokeStyle = '#2b2b43'; ctx.beginPath(); ctx.moveTo(chartWidth, 0); ctx.lineTo(chartWidth, height); ctx.stroke();
 
-            // GAMBAR TEXT ANGKA SKALA HARGA
+            // ANGKA SKALA HARGA
             for(let i=0; i<=6; i++) {
                 let y = height * (i/6);
                 let priceAtGrid = maxP - (currentRange * (i/6));
@@ -624,7 +1253,6 @@
             if(!isCurrent) ctx.setLineDash([4, 4]); 
             ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(chartWidth, y); ctx.stroke();
             ctx.setLineDash([]);
-            
             ctx.fillStyle = isCurrent ? color : 'rgba(13,6,6,0.8)';
             ctx.fillRect(chartWidth - 45, y - 9, 45, 18);
             ctx.fillStyle = isCurrent ? '#000' : color;
@@ -640,13 +1268,33 @@
             item.className = 'journal-item';
             let colorClass = pnlVal >= 0 ? 'profit' : 'loss';
             let sign = pnlVal >= 0 ? '+' : '';
-            item.innerHTML = `<span>${type} (${result})</span> <span class="${colorClass}">${sign}$${Math.abs(pnlVal).toFixed(2)}</span>`;
+            const note = document.getElementById('trade-notes').value;
+            const noteText = note ? ` [${note.substring(0, 20)}${note.length > 20 ? '...' : ''}]` : '';
+            item.innerHTML = `<span>${type} (${result})${noteText}</span> <span class="${colorClass}">${sign}$${Math.abs(pnlVal).toFixed(2)}</span>`;
             journalDiv.prepend(item);
+        }
+
+        function updateStreakDisplay() {
+            const el = document.getElementById('streak-display');
+            if (consecutiveTP >= 2) {
+                el.innerHTML = `🔥 ${consecutiveTP}x TP Streak`;
+                el.style.display = 'block';
+                el.style.borderColor = 'var(--buy-color)';
+                el.style.color = 'var(--buy-color)';
+            } else if (consecutiveSL >= 2) {
+                el.innerHTML = `❄️ ${consecutiveSL}x SL Streak`;
+                el.style.display = 'block';
+                el.style.borderColor = 'var(--sell-color)';
+                el.style.color = 'var(--sell-color)';
+            } else {
+                el.style.display = 'none';
+            }
         }
 
         function openPosition(type) {
             if (position) return;
             if(!isMarketPlaying) { alert("Market sedang di-Pause."); return; }
+            playSound('click');
             
             let isAuto = document.getElementById('auto-rr').checked;
             entryPrice = currentPrice;
@@ -668,7 +1316,6 @@
             document.getElementById('btn-buy').style.display = 'none'; document.getElementById('btn-sell').style.display = 'none';
             document.getElementById('btn-close').style.display = 'block';
             document.querySelector('.trade-settings').style.display = 'none';
-            document.getElementById('trade-status').innerHTML = `${type} Aktif. Target: +$${tpDollar} | Batas Rugi: -$${slDollar}`;
             drawChart();
         }
 
@@ -690,20 +1337,54 @@
             document.getElementById('balance').innerText = '$' + balance.toLocaleString('en-US', {minimumFractionDigits: 2});
             
             addJournal(position, reason, pnl);
+            updateStats(pnl, reason);
+            updateDailyChallenge(pnl);
             document.getElementById('taunt-loss').classList.remove('show'); tauntShown = false;
 
-            if (reason === 'SL' || (manual && pnl < 0)) { consecutiveSL++; } 
-            else if (reason === 'TP' || (manual && pnl > 0)) { consecutiveSL = 0; }
+            if (reason === 'TP' || (manual && pnl > 0)) { 
+                consecutiveSL = 0; 
+                consecutiveTP++;
+                consecutiveTPProfit += pnl;
+                if(consecutiveTP > stats.consecutiveTPMax) { stats.consecutiveTPMax = consecutiveTP; saveStats(); }
+                playSound('tp');
+                triggerParticles('confetti');
+            } 
+            else if (reason === 'SL' || (manual && pnl < 0)) { 
+                consecutiveSL++; 
+                consecutiveTP = 0;
+                consecutiveTPProfit = 0;
+                if(consecutiveSL > stats.consecutiveSLMax) { stats.consecutiveSLMax = consecutiveSL; saveStats(); }
+                playSound('sl');
+                createRedFlash();
+            } 
 
-            if (balance >= 130 && !canExit) { document.getElementById('winner-screen').style.display = 'flex'; }
-            else if (consecutiveSL >= 3) { document.getElementById('loser-screen').style.display = 'flex'; consecutiveSL = 0; }
-            else if (balance > 0 && balance < 20) { document.getElementById('low-balance-screen').style.display = 'flex'; }
+            if(consecutiveTP >= 3 && consecutiveTPProfit > 50) {
+                document.getElementById('pro-screen').style.display = 'flex';
+                playSound('win');
+                triggerParticles('confetti');
+                consecutiveTP = 0;
+                consecutiveTPProfit = 0;
+            }
+
+            if (balance >= 130 && !canExit) { 
+                document.getElementById('winner-screen').style.display = 'flex'; 
+                playSound('win');
+                triggerParticles('confetti');
+            }
+            else if (consecutiveSL >= 3) { 
+                document.getElementById('loser-screen').style.display = 'flex'; 
+                consecutiveSL = 0; 
+            }
+            else if (balance > 0 && balance < 20) { 
+                document.getElementById('low-balance-screen').style.display = 'flex'; 
+            }
 
             position = null; entryAbsoluteIndex = -1;
             document.getElementById('pnl').innerText = '$0.00'; document.getElementById('pnl').className = 'info-value';
             document.getElementById('btn-buy').style.display = 'block'; document.getElementById('btn-sell').style.display = 'block';
             document.getElementById('btn-close').style.display = 'none'; document.querySelector('.trade-settings').style.display = 'block';
-            document.getElementById('trade-status').innerHTML = `${msg} | PnL Terakhir: $${pnl.toFixed(2)}`;
+            document.getElementById('trade-notes').value = '';
+            updateStreakDisplay();
             drawChart();
         }
 
@@ -715,7 +1396,6 @@
             el.innerText = (pnl >= 0 ? '+$' : '-$') + Math.abs(pnl).toFixed(2);
             el.className = pnl >= 0 ? 'info-value profit' : 'info-value loss';
 
-            // ANIMASI TAUNTING JIKA LOSS > $50
             if (pnl <= -50 && !tauntShown) {
                 document.getElementById('taunt-loss').classList.add('show');
                 tauntShown = true;
