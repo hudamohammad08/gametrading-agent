@@ -232,19 +232,24 @@
         </div>
         <script>
             alert('DEBUG: Script is running!');
-            const debugInfo = document.getElementById('debug-info');
-            const now = new Date();
-            debugInfo.innerHTML = '| ' + now.toISOString() + ' | JS:START';
             
             const testContent = document.getElementById('test-content');
             if (testContent) {
                 testContent.style.display = 'block';
             }
             
+            const debugInfo = document.getElementById('debug-info');
+            if (debugInfo) {
+                const now = new Date();
+                debugInfo.innerHTML = '| ' + now.toISOString() + ' | JS:START';
+            }
+            
             window.onerror = function(msg, url, line) {
                 console.error('ERROR:', msg, 'at', url + ':' + line);
-                if (debugInfo) {
-                    debugInfo.innerHTML = 'ERROR: ' + msg + ' (line ' + line + ')';
+                if (testContent) {
+                    testContent.style.display = 'block';
+                    testContent.style.background = 'red';
+                    testContent.innerHTML = '<h2 style="color:#fff;">ERROR: ' + msg + '</h2><p style="color:#fff;">Line: ' + line + '</p>';
                 }
                 return false;
             };
