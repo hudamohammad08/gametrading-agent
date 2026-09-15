@@ -17,7 +17,7 @@
         body { 
             margin: 0; padding: 0; background-color: #000; color: var(--text-main); 
             font-family: 'Poppins', sans-serif;
-            height: 100vh; overflow: hidden; user-select: none; -webkit-user-select: none; touch-action: none; 
+            height: 100%; overflow: hidden; user-select: none; -webkit-user-select: none; touch-action: none; 
         }
 
         html {
@@ -25,7 +25,7 @@
         }
 
         #app-container {
-            width: 100%; height: 100vh; 
+            width: 100%; height: 100%; 
             background-color: var(--bg-base);
             position: relative; overflow: hidden; display: flex; flex-direction: column;
         }
@@ -100,7 +100,7 @@
         /* --- KUIS EDUKASI UI --- */
         #quiz-section {
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            padding: 20px; background: radial-gradient(circle at center, var(--bg-panel) 0%, var(--bg-base) 100%);
+            height: 100%; padding: 20px; background: radial-gradient(circle at center, var(--bg-panel) 0%, var(--bg-base) 100%);
             overflow-y: auto; z-index: 5; box-sizing: border-box;
         }
         .quiz-card { background: rgba(13, 6, 6, 0.95); padding: 25px; border-radius: 16px; border: 1px solid var(--maroon-dark); width: 100%; box-sizing: border-box; text-align: center; }
@@ -228,12 +228,12 @@
     <div id="app-container">
         <canvas id="particle-canvas"></canvas>
         
-        <div id="taunt-loss" class="taunt-msg">📉 XAUUSD: "HAHAHA MENURUTKU BAKAL MARGIN CALL!!!"</div>
+        <div id="taunt-loss" class="taunt-msg">ðŸ“‰ XAUUSD: "HAHAHA MENURUTKU BAKAL MARGIN CALL!!!"</div>
         <div id="streak-display"></div>
         <div id="daily-challenge"></div>
 
         <div id="security-blur" class="overlay-screen">
-            <h3 style="color:var(--sell-color); margin-bottom:10px;">⚠️ GAME DIJEDA</h3>
+            <h3 style="color:var(--sell-color); margin-bottom:10px;">âš ï¸ GAME DIJEDA</h3>
             <p style="color:var(--text-muted); font-size:0.85rem;">Terdeteksi screenshot, split screen, atau kehilangan fokus.<br>Klik untuk melanjutkan.</p>
         </div>
 
@@ -278,7 +278,7 @@
         <!-- Stats Modal -->
         <div id="stats-modal">
             <div class="stats-card">
-                <h2>📊 Statistik Trader</h2>
+                <h2>ðŸ“Š Statistik Trader</h2>
                 <div id="stats-content"></div>
                 <button class="btn-dismiss" style="margin-top:15px;" onclick="document.getElementById('stats-modal').style.display='none'">TUTUP</button>
             </div>
@@ -287,8 +287,8 @@
         <!-- Share Modal -->
         <div id="screenshot-overlay">
             <h2 style="color:var(--gold-accent); margin-bottom:15px;">Bagikan Hasil Trading</h2>
-            <button class="share-btn share-wa" onclick="shareTo('whatsapp')">📱 WhatsApp</button>
-            <button class="share-btn share-ig" onclick="shareTo('instagram')">📸 Instagram Story</button>
+            <button class="share-btn share-wa" onclick="shareTo('whatsapp')">ðŸ“± WhatsApp</button>
+            <button class="share-btn share-ig" onclick="shareTo('instagram')">ðŸ“¸ Instagram Story</button>
             <button class="share-btn share-close" onclick="document.getElementById('screenshot-overlay').style.display='none'">BATAL</button>
         </div>
 
@@ -299,7 +299,7 @@
                 <div id="q-options"></div>
                 <div class="quiz-feedback" id="q-feedback"></div>
                 <button class="btn-continue" id="btn-continue" onclick="nextAction()">Soal Berikutnya</button>
-                <button class="btn-market" id="btn-market" onclick="startGame()">Akses Market Trading ➔</button>
+                <button class="btn-market" id="btn-market" onclick="startGame()">Akses Market Trading âž”</button>
             </div>
         </div>
 
@@ -311,9 +311,9 @@
                 </div>
                 <div style="display:flex; gap: 6px;">
                     <button class="play-pause-btn" id="btn-speed" onclick="toggleSpeed()">1x</button>
-                    <button class="play-pause-btn" id="btn-mute" onclick="toggleMute()">🔊</button>
-                    <button class="play-pause-btn" id="btn-stats" onclick="showStats()">📊</button>
-                    <button class="play-pause-btn" id="btn-play-pause" onclick="togglePlayPause()">⏸ PAUSE</button>
+                    <button class="play-pause-btn" id="btn-mute" onclick="toggleMute()">ðŸ”Š</button>
+                    <button class="play-pause-btn" id="btn-stats" onclick="showStats()">ðŸ“Š</button>
+                    <button class="play-pause-btn" id="btn-play-pause" onclick="togglePlayPause()">â¸ PAUSE</button>
                 </div>
             </div>
             
@@ -417,17 +417,17 @@
         }
 
         function getProfitFactor() {
-            return stats.totalLoss > 0 ? (stats.totalProfit / stats.totalLoss).toFixed(2) : stats.totalProfit > 0 ? '∞' : '0.00';
+            return stats.totalLoss > 0 ? (stats.totalProfit / stats.totalLoss).toFixed(2) : stats.totalProfit > 0 ? 'âˆž' : '0.00';
         }
 
         function getRank() {
             const winRate = parseFloat(getWinRate());
             const pf = parseFloat(getProfitFactor()) || 0;
-            if (winRate >= 70 && pf >= 2) return { name: '🏆 TRADER LEGEND', color: '#ffd700', bg: 'rgba(255,215,0,0.2)' };
-            if (winRate >= 60 && pf >= 1.5) return { name: '💎 TRADER PROFESIONAL', color: '#d4af37', bg: 'rgba(212,175,55,0.2)' };
-            if (winRate >= 50 && pf >= 1) return { name: '⭐ TRADER ADVANCED', color: '#c0c0c0', bg: 'rgba(192,192,192,0.2)' };
-            if (winRate >= 40) return { name: '📈 TRADER INTERMEDIATE', color: '#cd7f32', bg: 'rgba(205,127,50,0.2)' };
-            return { name: '🎓 TRADER BEGINNER', color: '#8c7373', bg: 'rgba(140,115,115,0.2)' };
+            if (winRate >= 70 && pf >= 2) return { name: 'ðŸ† TRADER LEGEND', color: '#ffd700', bg: 'rgba(255,215,0,0.2)' };
+            if (winRate >= 60 && pf >= 1.5) return { name: 'ðŸ’Ž TRADER PROFESIONAL', color: '#d4af37', bg: 'rgba(212,175,55,0.2)' };
+            if (winRate >= 50 && pf >= 1) return { name: 'â­ TRADER ADVANCED', color: '#c0c0c0', bg: 'rgba(192,192,192,0.2)' };
+            if (winRate >= 40) return { name: 'ðŸ“ˆ TRADER INTERMEDIATE', color: '#cd7f32', bg: 'rgba(205,127,50,0.2)' };
+            return { name: 'ðŸŽ“ TRADER BEGINNER', color: '#8c7373', bg: 'rgba(140,115,115,0.2)' };
         }
 
         function showStats() {
@@ -496,11 +496,11 @@
         function showDailyChallenge() {
             const el = document.getElementById('daily-challenge');
             if (dailyChallenge.completed) {
-                el.innerHTML = '✅ CHALLENGE<br>SELESAI';
+                el.innerHTML = 'âœ… CHALLENGE<br>SELESAI';
                 el.style.borderColor = '#2ecc71';
                 el.style.color = '#2ecc71';
             } else {
-                el.innerHTML = `🎯 ${dailyProfit}/$${dailyChallenge.target} (${dailyTrades}/${dailyChallenge.maxTrades})`;
+                el.innerHTML = `ðŸŽ¯ ${dailyProfit}/$${dailyChallenge.target} (${dailyTrades}/${dailyChallenge.maxTrades})`;
                 el.style.borderColor = 'var(--gold-accent)';
                 el.style.color = 'var(--gold-accent)';
             }
@@ -516,13 +516,13 @@
         }
 
         function getResetCooldownText() {
-            if (canFreeReset()) return '✅ RESET GRATIS TERSEDIA';
+            if (canFreeReset()) return 'âœ… RESET GRATIS TERSEDIA';
             const now = Date.now();
             const cooldown = 24 * 60 * 60 * 1000;
             const remaining = cooldown - (now - lastResetTime);
             const hours = Math.floor(remaining / (1000 * 60 * 60));
             const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-            return `⏳ Reset gratis dalam ${hours}j ${minutes}m`;
+            return `â³ Reset gratis dalam ${hours}j ${minutes}m`;
         }
 
         window.addEventListener('beforeunload', function (e) {
@@ -536,13 +536,13 @@
         window.addEventListener('blur', function() {
             document.getElementById('security-blur').style.display = 'flex';
             isMarketPlaying = false; 
-            document.getElementById('btn-play-pause').innerText = "▶️ PLAY";
+            document.getElementById('btn-play-pause').innerText = "â–¶ï¸ PLAY";
         });
         document.addEventListener("visibilitychange", function() {
             if (document.hidden) {
                 document.getElementById('security-blur').style.display = 'flex';
                 isMarketPlaying = false; 
-                document.getElementById('btn-play-pause').innerText = "▶️ PLAY";
+                document.getElementById('btn-play-pause').innerText = "â–¶ï¸ PLAY";
             }
         });
         document.getElementById('security-blur').addEventListener('click', function() {
@@ -611,7 +611,7 @@
 
         function toggleMute() {
             isMuted = !isMuted;
-            document.getElementById('btn-mute').innerText = isMuted ? '🔇' : '🔊';
+            document.getElementById('btn-mute').innerText = isMuted ? 'ðŸ”‡' : 'ðŸ”Š';
             if (!isMuted) playSound('click');
         }
 
@@ -719,10 +719,10 @@
         function getShareText() {
             const rank = getRank();
             switch(shareData.type) {
-                case 'winner': return `🎉 Target Tercapai!\nProfit +$30 di VIP Trading Simulator!\nBalance: $${shareData.balance.toFixed(2)}\nRank: ${rank.name}`;
-                case 'pro': return `🏆 TRADER PROFESIONAL!\n3x TP Streak dengan Profit > $50!\nBalance: $${shareData.balance.toFixed(2)}\nRank: ${rank.name}`;
-                case 'loser': return `💀 ANDA PECUNDANG!\n3x SL berturut-turut di VIP Trading Simulator.\nRank: ${rank.name}`;
-                default: return `📊 VIP Trading Simulator\nBalance: $${shareData.balance.toFixed(2)}\nRank: ${rank.name}`;
+                case 'winner': return `ðŸŽ‰ Target Tercapai!\nProfit +$30 di VIP Trading Simulator!\nBalance: $${shareData.balance.toFixed(2)}\nRank: ${rank.name}`;
+                case 'pro': return `ðŸ† TRADER PROFESIONAL!\n3x TP Streak dengan Profit > $50!\nBalance: $${shareData.balance.toFixed(2)}\nRank: ${rank.name}`;
+                case 'loser': return `ðŸ’€ ANDA PECUNDANG!\n3x SL berturut-turut di VIP Trading Simulator.\nRank: ${rank.name}`;
+                default: return `ðŸ“Š VIP Trading Simulator\nBalance: $${shareData.balance.toFixed(2)}\nRank: ${rank.name}`;
             }
         }
 
@@ -760,11 +760,11 @@
             const quiz = questions[currentQuestion]; const selectedOption = quiz.shuffledOptions[index]; const buttons = document.querySelectorAll('.quiz-btn');
             if (selectedOption.correct) {
                 score++; btnSelected.style.background = "var(--buy-color)";
-                document.getElementById('q-feedback').innerHTML = `<span style="color:var(--buy-color);">✓ BENAR</span><br>${quiz.explanation}`;
+                document.getElementById('q-feedback').innerHTML = `<span style="color:var(--buy-color);">âœ“ BENAR</span><br>${quiz.explanation}`;
             } else {
                 btnSelected.style.background = "var(--sell-color)";
                 const correctIndex = quiz.shuffledOptions.findIndex(o => o.correct); buttons[correctIndex].style.border = "2px solid var(--buy-color)";
-                document.getElementById('q-feedback').innerHTML = `<span style="color:var(--sell-color);">✕ SALAH</span><br>${quiz.explanation}`;
+                document.getElementById('q-feedback').innerHTML = `<span style="color:var(--sell-color);">âœ• SALAH</span><br>${quiz.explanation}`;
             }
             document.getElementById('btn-continue').style.display = "block";
             document.getElementById('btn-continue').innerText = currentQuestion === questions.length - 1 ? "Lihat Hasil" : "Soal Berikutnya";
@@ -790,7 +790,7 @@
 
         function togglePlayPause() {
             isMarketPlaying = !isMarketPlaying;
-            document.getElementById('btn-play-pause').innerText = isMarketPlaying ? "⏸ PAUSE" : "▶️ PLAY";
+            document.getElementById('btn-play-pause').innerText = isMarketPlaying ? "â¸ PAUSE" : "â–¶ï¸ PLAY";
         }
 
         function toggleSpeed() {
@@ -952,7 +952,7 @@
             const cooldownText = document.getElementById('reset-cooldown');
             if (canFreeReset()) {
                 btnFree.style.display = 'block';
-                cooldownText.textContent = '✅ Reset gratis tersedia!';
+                cooldownText.textContent = 'âœ… Reset gratis tersedia!';
             } else {
                 btnFree.style.display = 'none';
                 cooldownText.textContent = getResetCooldownText();
@@ -1202,12 +1202,12 @@
         function updateStreakDisplay() {
             const el = document.getElementById('streak-display');
             if (consecutiveTP >= 2) {
-                el.innerHTML = `🔥 ${consecutiveTP}x TP Streak`;
+                el.innerHTML = `ðŸ”¥ ${consecutiveTP}x TP Streak`;
                 el.style.display = 'block';
                 el.style.borderColor = 'var(--buy-color)';
                 el.style.color = 'var(--buy-color)';
             } else if (consecutiveSL >= 2) {
-                el.innerHTML = `❄️ ${consecutiveSL}x SL Streak`;
+                el.innerHTML = `â„ï¸ ${consecutiveSL}x SL Streak`;
                 el.style.display = 'block';
                 el.style.borderColor = 'var(--sell-color)';
                 el.style.color = 'var(--sell-color)';
@@ -1230,7 +1230,7 @@
             let slDollar = isAuto ? 10 : parseFloat(document.getElementById('input-sl').value);
 
             if (isNaN(tpDollar) || isNaN(slDollar) || tpDollar <= 0 || slDollar <= 0) { 
-                alert("⚠️ Masukkan angka Dollar TP/SL yg benar!"); return; 
+                alert("âš ï¸ Masukkan angka Dollar TP/SL yg benar!"); return; 
             }
 
             if(type === 'BUY') { tpPrice = entryPrice + tpDollar; slPrice = entryPrice - slDollar; } 
