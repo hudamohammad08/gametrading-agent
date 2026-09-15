@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Trading Simulator - Debug</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000; color: #fff; font-family: Arial, sans-serif; padding: 20px; }
+        #status { color: #0f0; margin-bottom: 20px; }
+        .error { color: #f00; }
+        button { padding: 10px 20px; margin: 5px; background: #731313; color: #fff; border: 1px solid #d4af37; cursor: pointer; }
+        #game-area { display: none; margin-top: 20px; }
+        #chart { width: 100%; height: 400px; background: #0d0606; border: 1px solid #400707; }
+    </style>
+</head>
+<body>
+    <div id="status">Loading...</div>
+    <div id="controls">
+        <button onclick="showQuiz()">Show Quiz</button>
+        <button onclick="showGame()">Show Game</button>
+    </div>
+    <div id="game-area">
+        <div id="quiz" style="display:none;">
+            <h2 style="color:#d4af37;">Edukasi Trading</h2>
+            <div id="quiz-content"></div>
+        </div>
+        <div id="game" style="display:none;">
+            <h2 style="color:#d4af37;">Trading Game</h2>
+            <canvas id="chart"></canvas>
+            <button onclick="buy()">BUY</button>
+            <button onclick="sell()">SELL</button>
+            <button onclick="closePos()">CLOSE</button>
+            <div id="balance">Balance: $100.00</div>
+            <div id="pnl">PnL: $0.00</div>
+        </div>
+    </div>
+    <script>
+        const status = document.getElementById('status');
+        status.innerHTML = '✓ JavaScript loaded successfully<br>✓ DOM elements found';
+        
+        let balance = 100;
+        let position = null;
+        let entryPrice = 0;
+        let candles = [];
+        let currentPrice = 2050;
+        
+        // Generate initial candles
+        for (let i = 0; i < 50; i++) {
+            let open = currentPrice;
+            let close = currentPrice + (Math.random() - 0.5) * 10;
+            let high = Math.max(open, close) + Math.random() * 5;
+            let low = Math.min(open, close) - Math.random() * 5;
+            candles.push({ open, high, low, close });
+            currentPrice = close;
+        }
+        
+        function showQuiz() {
+            document.getElementById('quiz').style.display = 'block';
+            document.getElementById('game').style.display = 'none';
+            document.getElementById('quiz-content').innerHTML = `
+                <p style="color:#f0e6e6; margin: 20px 0;">Apa kepanjangan FOMC?</p>
+                <button onclick="answer(0)">Federal Open Market Committee</button>
+                <button onclick="answer(1)">Federal Online Market Council</button>
+                <button onclick="answer(2)">Financial Open Market Committee</button>
+                <button onclick="answer(3)">Federal Operations Monetary Council</button>
+                <div id="quiz-feedback" style="margin-top:15px;"></div>
+            `;
+        }
+        
+        function answer(index) {
+            const feedback = document.getElementById('quiz-feedback');
+            if (index === 0) {
+                feedback.innerHTML = '<span style="color:#1e824c;">✓ BENAR</span>';
+            } else {
+                feedback.innerHTML = '<span style="color:#991f1f;">✕ SALAH</span>';
+            }
+        }
+        
+        function showGame() {
+            document.getElementById('quiz').style.display = 'none';
+            document.getElementById('game').style.display = 'block';
+            document.getElementById('game-area').style.display = 'block';
+            drawChart();
+        }
+        
+        function drawChart() {
+            const canvas = document.getElementById('chart');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = 400;
+            
+            ctx.fillStyle = '#0d0606';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const candleWidth = (canvas.width / candles.length) * 0.8;
+            const spacing = canvas.width / candles.length;
+            
+            candles.forEach((c, i) => {
+                const x = i * spacing + spacing / 2;
+                const isBull = c.close >= c.open;
+                const color = isBull ? '#1e824c' : '#991f1f';
+                
+                ctx.strokeStyle = color;
+                ctx.fillStyle = color;
+                
+                // Wick
+                ctx.beginPath();
+                ctx.moveTo(x, getY(c.high));
+                ctx.lineTo(x, getY(c.low));
+                ctx.stroke();
+                
+                // Body
+                const bodyTop = getY(Math.max(c.open, c.close));
+                const bodyBottom = getY(Math.min(c.open, c.close));
+                ctx.fillRect(x - candleWidth/2, bodyTop, candleWidth, bodyBottom - bodyTop);
+            });
+            
+            function getY(price) {
+                const min = Math.min(...candles.map(c => c.low)) - 10;
+                const max = Math.max(...candles.map(c => c.high)) + 10;
+                return canvas.height - ((price - min) / (max - min)) * canvas.height;
+            }
+        }
+        
+        function buy() {
+            if (position) return;
+            position = 'BUY';
+            entryPrice = currentPrice;
+            updateUI();
+        }
+        
+        function sell() {
+            if (position) return;
+            position = 'SELL';
+            entryPrice = currentPrice;
+            updateUI();
+        }
+        
+        function closePos() {
+            if (!position) return;
+            const pnl = position === 'BUY' ? currentPrice - entryPrice : entryPrice - currentPrice;
+            balance += pnl;
+            position = null;
+            updateUI();
+        }
+        
+        function updateUI() {
+            document.getElementById('balance').innerText = 'Balance: $' + balance.toFixed(2);
+            if (position) {
+                const pnl = position === 'BUY' ? currentPrice - entryPrice : entryPrice - currentPrice;
+                document.getElementById('pnl').innerText = 'PnL: ' + (pnl >= 0 ? '+$' : '-$') + Math.abs(pnl).toFixed(2);
+                document.getElementById('pnl').style.color = pnl >= 0 ? '#1e824c' : '#991f1f';
+            }
+        }
+        
+        status.innerHTML += '<br>✓ Game initialized';
+    </script>
+</body>
+</html>
