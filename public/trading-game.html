@@ -225,13 +225,17 @@
 </head>
     <body>
         <div id="debug-test" style="position:fixed;top:0;left:0;width:100%;background:red;color:white;padding:10px;z-index:9999;font-size:14px;">DEBUG: Game Loading... <span id="debug-info"></span></div>
+        <div id="test-content" style="display:none; position:fixed; top:40px; left:0; width:100%; height:calc(100% - 40px); background:#0f0; z-index:9998; border: 5px solid #ff0; box-sizing:border-box; padding:20px; text-align:center;">
+            <h2 style="color:#000; margin-bottom:10px; font-size: 2rem;">TEST CONTENT</h2>
+            <p style="color:#000; font-size:1.2rem;">Jika kamu melihat ini, CSS dan HTML bekerja normal.</p>
+            <button onclick="alert('JS works!')" style="padding:10px 20px; background:#731313; color:#fff; border:1px solid #d4af37; margin-top:10px;">TEST JS</button>
+        </div>
         <script>
             alert('DEBUG: Script is running!');
             const debugInfo = document.getElementById('debug-info');
             const now = new Date();
             debugInfo.innerHTML = '| ' + now.toISOString() + ' | JS:START';
             
-            // Show test content
             const testContent = document.getElementById('test-content');
             if (testContent) {
                 testContent.style.display = 'block';
@@ -247,11 +251,6 @@
         </script>
 
         <div id="app-container">
-            <div id="test-content" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; padding:60px 20px 20px; text-align:center; background:#0f0; z-index:9998; border: 5px solid #ff0; box-sizing:border-box;">
-                <h2 style="color:#000; margin-bottom:10px; font-size: 2rem;">TEST CONTENT</h2>
-                <p style="color:#000; font-size:1.2rem;">Jika kamu melihat ini, CSS dan HTML bekerja normal.</p>
-                <button onclick="alert('JS works!')" style="padding:10px 20px; background:#731313; color:#fff; border:1px solid #d4af37; margin-top:10px;">TEST JS</button>
-            </div>
         <canvas id="particle-canvas"></canvas>
         
         <div id="taunt-loss" class="taunt-msg">ðŸ“‰ XAUUSD: "HAHAHA MENURUTKU BAKAL MARGIN CALL!!!"</div>
