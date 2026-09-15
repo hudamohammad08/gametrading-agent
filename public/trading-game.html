@@ -125,21 +125,12 @@
         #btn-mute { background: #1a1a2e; border-color: #4a4e69; width: 35px; font-size: 0.7rem; }
         #btn-stats { background: #1a1a2e; border-color: #4a4e69; padding: 5px 8px; font-size: 0.65rem; }
 
-        #canvas-container { flex: 1; width: 100%; position: relative; background: var(--bg-base); cursor: grab; overflow: hidden;}
-        #canvas-container:active { cursor: grabbing; }
-        canvas { display: block; width: 100%; height: 100%; touch-action: none;}
+        #canvas-container { flex: 1; width: 100%; position: relative; background: #000; cursor: default; overflow: hidden;}
+        #canvas-container:active { cursor: default; }
+        canvas { display: block; width: 100%; height: 100%; touch-action: none; background: #000;}
         .reset-view-hint { position: absolute; top: 10px; left: 10px; font-size: 0.6rem; color: rgba(255,255,255,0.4); pointer-events: none;}
 
-        /* News Ticker */
-        #news-ticker {
-            position: absolute; top: 0; left: 0; width: 100%; height: 28px;
-            background: linear-gradient(90deg, var(--maroon-dark), var(--maroon-main), var(--maroon-dark));
-            color: var(--gold-accent); font-size: 0.65rem; font-weight: 600;
-            display: flex; align-items: center; overflow: hidden; z-index: 10;
-            border-bottom: 1px solid var(--maroon-light);
-        }
-        #news-ticker-content { white-space: nowrap; animation: ticker 20s linear infinite; padding-left: 100%; }
-        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        /* News Ticker removed */
 
         .control-panel { background: var(--bg-panel); padding: 10px 12px; border-top: 1px solid var(--maroon-dark); box-sizing: border-box; width: 100%; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px;}
         
@@ -238,20 +229,15 @@
         <div id="streak-display"></div>
         <div id="daily-challenge"></div>
 
-        <!-- News Ticker -->
-        <div id="news-ticker" style="display:none;">
-            <div id="news-ticker-content">📰 MEMUAT BERITA EKONOMI...</div>
-        </div>
-
         <div id="security-blur" class="overlay-screen">
             <h3 style="color:var(--sell-color); margin-bottom:10px;">⚠️ GAME DIJEDA</h3>
             <p style="color:var(--text-muted); font-size:0.85rem;">Terdeteksi screenshot, split screen, atau kehilangan fokus.<br>Klik untuk melanjutkan.</p>
         </div>
 
-        <div id="mc-screen" class="overlay-screen">
-            <div class="mc-text">MARGIN<br>CALL</div>
-            <p style="color: #ddd; margin-top: 15px; font-size: 0.95rem;">Saldo Habis Tersapu Floating Loss!</p>
-            <div class="reset-options">
+        <div id="mc-screen" class="overlay-screen" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:auto; height:auto; max-width:90%; padding:30px; background:rgba(20,0,0,0.98); border-radius:16px; border:2px solid #ff0000; z-index:2000;">
+            <div class="mc-text" style="text-align:center;">MARGIN<br>CALL</div>
+            <p style="color: #ddd; margin-top: 15px; font-size: 0.95rem; text-align:center;">Saldo Habis Tersapu Floating Loss!</p>
+            <div class="reset-options" style="margin-top:20px;">
                 <button class="reset-btn reset-btn-paid" onclick="resetAfterMC(true)">RESET $100 (Biaya $10)</button>
                 <button class="reset-btn reset-btn-free" id="btn-free-reset" onclick="resetAfterMC(false)" style="display:none;">RESET GRATIS</button>
                 <div class="reset-cooldown" id="reset-cooldown"></div>
@@ -701,50 +687,7 @@
         }
 
         /* ================= NEWS TICKER ================= */
-        const newsHeadlines = [
-            "📊 FOMC akan mengumumkan kebijakan suku bunga pekan ini",
-            "📉 DXY menguat 0.5%, tekanan ke emas meningkat",
-            "📈 NFP aktual 250K vs forecast 180K, USD kuat",
-            "🏦 The Fed mempertimbangkan hawkish stance",
-            "📉 Inflasi AS turun ke 2.4%, emas dapat dukungan",
-            "📈 Yield Treasury 10Y naik ke 4.2%",
-            "🌍 Konflik geopolitik meningkatkan permintaan safe haven",
-            "📊 Pasar menunggu rilis CPI bulan ini",
-            "💹 S&P 500 mencapai all-time high",
-            "🛢️ Harga minyak naik 3% akibat supply concern"
-        ];
-
-        let currentNews = [];
-        let newsInterval;
-
-        function startNewsTicker() {
-            currentNews = [...newsHeadlines].sort(() => Math.random() - 0.5).slice(0, 5);
-            const tickerContent = document.getElementById('news-ticker-content');
-            tickerContent.textContent = '📰 ' + currentNews.join('     🟦     ');
-            document.getElementById('news-ticker').style.display = 'flex';
-            
-            // News affects volatility
-            newsInterval = setInterval(() => {
-                if (Math.random() < 0.3) {
-                    trendDrift += (Math.random() - 0.5) * 2;
-                    // Show news flash
-                    showNewsFlash(currentNews[Math.floor(Math.random() * currentNews.length)]);
-                }
-            }, 5000);
-        }
-
-        function showNewsFlash(text) {
-            const flash = document.createElement('div');
-            flash.style.cssText = `position:absolute;top:30px;left:50%;transform:translateX(-50%);background:rgba(212,175,55,0.9);color:#000;padding:6px 14px;border-radius:6px;font-size:0.7rem;font-weight:600;z-index:20;animation:newsFlash 3s forwards;`;
-            flash.textContent = text;
-            document.getElementById('app-container').appendChild(flash);
-            setTimeout(() => flash.remove(), 3000);
-        }
-
-        // Add newsFlash animation
-        const newsStyle = document.createElement('style');
-        newsStyle.textContent = '@keyframes newsFlash { 0% { opacity: 0; transform: translateX(-50%) translateY(-10px); } 10% { opacity: 1; transform: translateX(-50%) translateY(0); } 80% { opacity: 1; } 100% { opacity: 0; } }';
-        document.head.appendChild(newsStyle);
+        /* News Ticker removed */
 
         /* ================= SHARE SYSTEM ================= */
         let shareData = { type: '', pnl: 0, balance: 0 };
@@ -890,7 +833,6 @@
 
         let trendDrift = 0;
         let trendDuration = 0;
-        let newsActive = false;
 
         function generateHistory() {
             candles = []; let val = currentPrice;
@@ -910,42 +852,25 @@
             scrollOffset = 0; priceOffset = 0; priceZoom = 1; drawChart();
         }
 
-        let isDragging = false; 
         let isDraggingScale = false; 
-        let lastX = 0; let lastY = 0;
+        let lastY = 0;
         
         canvas.addEventListener('pointerdown', (e) => { 
-            if (e.clientX > width - 65) isDraggingScale = true;
-            else isDragging = true;
-            lastX = e.clientX; lastY = e.clientY; 
+            if (e.clientX > width - 65) {
+                isDraggingScale = true;
+                lastY = e.clientY; 
+            }
         });
-        canvas.addEventListener('pointerup', () => { isDragging = false; isDraggingScale = false; });
-        canvas.addEventListener('pointerleave', () => { isDragging = false; isDraggingScale = false; });
+        canvas.addEventListener('pointerup', () => { isDraggingScale = false; });
+        canvas.addEventListener('pointerleave', () => { isDraggingScale = false; });
         canvas.addEventListener('pointermove', (e) => {
-            if (isDraggingScale) {
-                let deltaY = e.clientY - lastY;
-                priceZoom -= deltaY * 0.01;
-                if (priceZoom < 0.1) priceZoom = 0.1;
-                if (priceZoom > 10) priceZoom = 10;
-                lastY = e.clientY;
-                drawChart();
-                return;
-            }
-            if (!isDragging) return;
-            let deltaX = e.clientX - lastX;
+            if (!isDraggingScale) return;
             let deltaY = e.clientY - lastY;
-            let shiftX = Math.round(deltaX / ((width - 65) / visibleCandlesCount)); 
-            if (shiftX !== 0) {
-                scrollOffset += shiftX; 
-                if (scrollOffset < -30) scrollOffset = -30; 
-                if (scrollOffset > candles.length - visibleCandlesCount) scrollOffset = candles.length - visibleCandlesCount;
-                lastX = e.clientX; 
-            }
-            if(Math.abs(deltaY) > 0) {
-                priceOffset += (deltaY / height) * 20;
-                lastY = e.clientY;
-            }
-            drawChart(); 
+            priceZoom -= deltaY * 0.01;
+            if (priceZoom < 0.1) priceZoom = 0.1;
+            if (priceZoom > 10) priceZoom = 10;
+            lastY = e.clientY;
+            drawChart();
         });
 
         function zoom(direction) {
@@ -1070,7 +995,6 @@
             loadStats();
             dailyChallenge = getDailyChallenge();
             showDailyChallenge();
-            startNewsTicker();
             generateHistory(); window.addEventListener('resize', resizeCanvas); resizeCanvas();
             updateResetButtons();
             
@@ -1084,7 +1008,6 @@
                     trendDuration--;
 
                     let fluctuation = (Math.random() - 0.5) * 4 + trendDrift;
-                    if (newsActive) fluctuation *= 1.5; // Higher volatility during news
                     currentPrice += fluctuation; ticks++;
                     let lastCandle = candles[candles.length - 1];
 
@@ -1137,14 +1060,7 @@
             const getY = p => height - ((p - minP) / currentRange) * height;
             
             let candleSpacing = chartWidth / visibleCandlesCount;
-            let candleWidth = candleSpacing * 0.6;
-
-            // DRAW GRID
-            ctx.lineWidth = 1;
-            for(let i=0; i<=6; i++) {
-                let y = height * (i/6);
-                ctx.strokeStyle = '#1a0d0d'; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(chartWidth, y); ctx.stroke();
-            }
+            let candleWidth = candleSpacing * 0.8;
 
             // DRAW INDICATORS
             if (showSMA || showEMA) {
@@ -1207,7 +1123,7 @@
                 }
             }
 
-            // CANDLESTICK
+            // CANDLESTICK - Solid fill
             visibleData.forEach((c, i) => {
                 let virtualIndex = startIndex + i;
                 let screenIndex = virtualIndex - windowStartIndex;
@@ -1219,8 +1135,7 @@
                 let bodyTop = getY(Math.max(c.open, c.close));
                 let bodyBottom = getY(Math.min(c.open, c.close));
                 let bodyHeight = Math.max(2, bodyBottom - bodyTop);
-                if(isBull) ctx.strokeRect(x - candleWidth/2, bodyTop, candleWidth, bodyHeight);
-                else ctx.fillRect(x - candleWidth/2, bodyTop, candleWidth, bodyHeight);
+                ctx.fillRect(x - candleWidth/2, bodyTop, candleWidth, bodyHeight);
             });
 
             // GARIS TARGET & ENTRY
@@ -1234,16 +1149,19 @@
             }
 
             // BLOK BACKGROUND SKALA HARGA
-            ctx.fillStyle = '#050505';
+            ctx.fillStyle = '#000';
             ctx.fillRect(chartWidth, 0, width - chartWidth, height);
-            ctx.strokeStyle = '#2b2b43'; ctx.beginPath(); ctx.moveTo(chartWidth, 0); ctx.lineTo(chartWidth, height); ctx.stroke();
+            ctx.strokeStyle = '#333'; ctx.beginPath(); ctx.moveTo(chartWidth, 0); ctx.lineTo(chartWidth, height); ctx.stroke();
 
-            // ANGKA SKALA HARGA
-            for(let i=0; i<=6; i++) {
-                let y = height * (i/6);
-                let priceAtGrid = maxP - (currentRange * (i/6));
-                ctx.fillStyle = '#787b86'; ctx.font = '9px Poppins'; ctx.textAlign = 'left';
-                ctx.fillText(priceAtGrid.toFixed(1), chartWidth + 5, y + 4);
+            // ANGKA SKALA HARGA - Lebih jelas dan lengkap
+            let priceSteps = 8;
+            ctx.fillStyle = '#aaa'; ctx.font = '10px Poppins'; ctx.textAlign = 'left';
+            for(let i=0; i<=priceSteps; i++) {
+                let y = height * (i/priceSteps);
+                let priceAtGrid = maxP - (currentRange * (i/priceSteps));
+                ctx.fillText(priceAtGrid.toFixed(2), chartWidth + 6, y + 4);
+                // Grid line tipis
+                ctx.strokeStyle = '#1a1a1a'; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(chartWidth, y); ctx.stroke();
             }
         }
 
@@ -1293,7 +1211,6 @@
 
         function openPosition(type) {
             if (position) return;
-            if(!isMarketPlaying) { alert("Market sedang di-Pause."); return; }
             playSound('click');
             
             let isAuto = document.getElementById('auto-rr').checked;
