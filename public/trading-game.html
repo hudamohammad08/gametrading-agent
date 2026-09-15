@@ -365,7 +365,11 @@
         </div>
     </div>
 
-    <script>
+        <script>
+            window.onerror = function(msg, url, line) {
+                console.error('ERROR:', msg, 'at', url + ':' + line);
+                return false;
+            };
         /* ================= PENGAMANAN & ANTI-CHEAT ================= */
         let consecutiveSL = 0; 
         let consecutiveTP = 0;
