@@ -368,8 +368,13 @@
         <script>
             window.onerror = function(msg, url, line) {
                 console.error('ERROR:', msg, 'at', url + ':' + line);
+                alert('JS Error: ' + msg + ' at line ' + line);
                 return false;
             };
+            window.addEventListener('unhandledrejection', function(event) {
+                console.error('UNHANDLED REJECTION:', event.reason);
+                alert('Unhandled Promise Error: ' + event.reason);
+            });
         /* ================= PENGAMANAN & ANTI-CHEAT ================= */
         let consecutiveSL = 0; 
         let consecutiveTP = 0;
