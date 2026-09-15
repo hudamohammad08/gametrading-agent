@@ -225,18 +225,24 @@
 </head>
     <body>
         <div id="debug-test" style="position:fixed;top:0;left:0;width:100%;background:red;color:white;padding:10px;z-index:9999;font-size:14px;">DEBUG: Game Loading...</div>
-        <div id="debug-container" style="display:none; position:fixed; top:40px; left:0; width:100%; background:blue; color:white; padding:10px; z-index:9999; font-size:12px;"></div>
+        <div id="debug-container" style="display:block; position:fixed; top:40px; left:0; width:100%; background:blue; color:white; padding:10px; z-index:9999; font-size:12px;"></div>
         <script>
             console.log('=== DEBUG START ===');
             console.log('Document readyState:', document.readyState);
             console.log('Body exists:', !!document.body);
             console.log('App container exists:', !!document.getElementById('app-container'));
             
+            const container = document.getElementById('app-container');
+            const debug = document.getElementById('debug-container');
+            if (container && debug) {
+                const rect = container.getBoundingClientRect();
+                debug.innerHTML = 'Container: ' + rect.width + 'x' + rect.height + ' | Body: ' + document.body.offsetHeight + ' | Viewport: ' + window.innerWidth + 'x' + window.innerHeight;
+            }
+            
             window.onerror = function(msg, url, line) {
                 console.error('ERROR:', msg, 'at', url + ':' + line);
-                const debug = document.getElementById('debug-container');
                 if (debug) {
-                    debug.style.display = 'block';
+                    debug.style.background = 'red';
                     debug.innerHTML = '<strong style="color:#ff0;">ERROR:</strong> ' + msg + ' at line ' + line;
                 }
                 return false;
